@@ -3,6 +3,6 @@
 /// </summary>
 [System.Serializable]
 public class DataArrays {
-    public HumanDataObject[] Humans;
-    public PetDataObject[] Pets;
+    public ResourceDataObject[] Resources;
+    public ItemDataObject[] Items;
 }
