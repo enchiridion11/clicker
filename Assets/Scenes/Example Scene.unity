@@ -457,7 +457,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1607406112}
-  - component: {fileID: 1607406111}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -465,26 +464,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1607406111
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1607406110}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19dcde2fda8c18847aafe64e345bcdbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  list:
-  - RotationalX:
-    - Frequency: 5
-      Amplitude: 5
-    - Frequency: 5
-      Amplitude: 5
-    RotationalY: []
-    RotationalZ: []
-    Duration: 5
 --- !u!4 &1607406112
 Transform:
   m_ObjectHideFlags: 0
