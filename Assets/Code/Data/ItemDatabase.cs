@@ -7,7 +7,7 @@ public class ItemDatabase : ScriptableObject {
     #region Fields
 
     [SerializeField]
-    List<Item> database;
+    public List<Item> database;
 
     #endregion
 
@@ -47,7 +47,7 @@ public class ItemDatabase : ScriptableObject {
     }
 
     public void SortAlphabeticallyAtoZ () {
-        database.Sort ((x, y) => string.Compare (x.Name, y.Name));
+        database.Sort ((x, y) => string.Compare (x.name, y.name));
     }
 
     #endregion

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class CustomList : MonoBehaviour {
+public class CustomList : ScriptableObject {
     //This is our custom class with our variables
     [System.Serializable]
     public class MyClass {
@@ -10,6 +10,7 @@ public class CustomList : MonoBehaviour {
         public float AnFloat;
         public Vector3 AnVector3;
         public int[] AnIntArray = new int[0];
+        public ItemRequirements ACustomClassArray;
     }
 
     //This is our list we want to use to represent our class as an array.

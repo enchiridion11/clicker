@@ -5,34 +5,23 @@ public class Item {
     #region Fields
 
     [SerializeField]
-    string name;
+    public string name;
 
     [SerializeField]
-    ItemRequirements itemRequirements;
+    public ItemRequirements[] requirements;
 
     #endregion
 
     #region Properties
 
-    public string Name {
-        get { return name; }
-
-        set { name = value; }
-    }
-
-    public ItemRequirements ItemRequirements {
-        get { return itemRequirements; }
-
-        set { itemRequirements = value; }
-    }
-
     #endregion
 
     #region Constructors
 
-    public Item (string name) {
+    public Item (string name, ItemRequirements[] requirements) {
         //ID = id;
-        Name = name;
+        this.name = name;
+        this.requirements = requirements;
     }
 
     #endregion
@@ -50,4 +39,9 @@ public class Item {
 public class ItemRequirements {
     public string item;
     public int amount;
+
+    public ItemRequirements (string item, int amount) {
+        this.item = item;
+        this.amount = amount;
+    }
 }

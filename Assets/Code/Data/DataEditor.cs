@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using WebSocketSharp;
 
 #if UNITY_EDITOR
 public class DataEditor : EditorWindow {
@@ -20,15 +21,22 @@ public class DataEditor : EditorWindow {
     }
 
     List<string> itemPopUp;
+    List<ItemRequirements> newItemRequirements = new List<ItemRequirements> ();
+    List<int> itemPopUpIndex = new List<int> ();
+    List<int> newItemRequirementAmount = new List<int> ();
 
     State state;
 
     string newItemName;
+    string newItemRequirementName;
+    string copiedName;
 
     int selectedItem;
-    int itemPopUpIndex;
 
-    ItemRequirementsDataObject[] newItemRequirements;
+    bool copiedValues;
+
+    SerializedObject itemsDatabaseObject;
+    SerializedProperty itemsList;
 
     ItemDatabase items;
 
@@ -52,24 +60,6 @@ public class DataEditor : EditorWindow {
         DisplayListArea ();
         DisplayMainArea ();
         EditorGUILayout.EndHorizontal ();
-
-        /*  if (DataArrays != null) {
-              var serializedObject = new SerializedObject (this);
-              var serializedProperty = serializedObject.FindProperty ("DataArrays");
-              EditorGUILayout.PropertyField (serializedProperty, true);
-  
-              serializedObject.ApplyModifiedProperties ();
-  
-              if (GUILayout.Button ("Save Data")) {
-                  SaveGameData ();
-              }
-          }
-  
-          if (GUILayout.Button ("Load Data")) {
-              LoadGameData ();
-          }*/
-
-        // GUILayout.EndScrollView ();
     }
 
     #endregion
@@ -82,7 +72,8 @@ public class DataEditor : EditorWindow {
     void LoadDatabase () {
         items = (ItemDatabase) AssetDatabase.LoadAssetAtPath (AssetPath, typeof(ItemDatabase));
         itemPopUp = new List<string> (items.Count);
-
+        itemsDatabaseObject = new SerializedObject (items);
+        itemsList = itemsDatabaseObject.FindProperty ("database");
 
         if (items == null) {
             CreateDatabase ();
@@ -90,9 +81,8 @@ public class DataEditor : EditorWindow {
     }
 
     string[] GetItemPopUpList () {
-        itemPopUp.Add ("None");
         for (var i = 0; i < items.Count; i++) {
-            itemPopUp.Add (items.Item (i).Name);
+            itemPopUp.Add (items.Item (i).name);
         }
 
         return itemPopUp.ToArray ();
@@ -114,14 +104,35 @@ public class DataEditor : EditorWindow {
         for (var i = 0; i < items.Count; i++) {
             EditorGUILayout.BeginHorizontal ();
             if (GUILayout.Button ("-", GUILayout.Width (25))) {
+                // make sure item is not being used as requirement in another item
+                if (!CanRemoveItem (items.Item (i).name)) {
+                    EditorUtility.DisplayDialog ("Warning", "Cannot delete " + items.Item (i).name + ", it is another items requirement!", "Ok");
+                    return;
+                }
+
                 items.RemoveAt (i);
-                items.SortAlphabeticallyAtoZ ();
+
+                // clear the name field
+                GUI.SetNextControlName ("Name");
+                newItemName = string.Empty;
+                GUI.FocusControl ("Name");
+
+                RefreshDatabase ();
                 EditorUtility.SetDirty (items);
                 state = State.BLANK;
                 return;
             }
 
-            if (GUILayout.Button (items.Item (i).Name, "box", GUILayout.ExpandWidth (true))) {
+            if (GUILayout.Button (items.Item (i).name, "box", GUILayout.ExpandWidth (true))) {
+                // reset names back to copied name
+                if (copiedValues) {
+                    GUI.SetNextControlName ("Name");
+                    newItemName = copiedName;
+                    GUI.FocusControl ("Name");
+                    items.Item (selectedItem).name = copiedName;
+                    copiedValues = false;
+                }
+
                 selectedItem = i;
                 state = State.EDIT;
             }
@@ -177,54 +188,149 @@ public class DataEditor : EditorWindow {
     }
 
     void DisplayEditMainArea () {
-        items.Item (selectedItem).Name = EditorGUILayout.TextField (new GUIContent ("Name:"), items.Item (selectedItem).Name);
-        //items.Item(selectedItem).damage = int.Parse(EditorGUILayout.TextField(new GUIContent("Damage: "), weapons.Weapon(selectedWeapon).damage.ToString()));
+        // store data for cancel
+        if (!copiedValues) {
+            copiedName = items.Item (selectedItem).name;
+            copiedValues = true;
+        }
+
+        // display selected item current name
+        items.Item (selectedItem).name = EditorGUILayout.TextField (new GUIContent ("Name:"), items.Item (selectedItem).name);
+
+        // display selected item current requirements (if any)
+        for (var i = 0; i < items.Item (selectedItem).requirements.Length; i++) {
+            EditorGUILayout.LabelField ("Requirement " + (i + 1));
+            // itemPopUpIndexUpdate = EditorGUILayout.Popup ("Item:", selectedItem, GetItemPopUpList ());
+            items.Item (selectedItem).requirements[i].amount = EditorGUILayout.IntField (new GUIContent ("Amount:"), items.Item (selectedItem).requirements[i].amount);
+        }
+
 
         EditorGUILayout.Space ();
 
         if (GUILayout.Button ("Update", GUILayout.Width (100))) {
-            items.SortAlphabeticallyAtoZ ();
+            // data validation
+            if (items.Item (selectedItem).name.IsNullOrEmpty ()) {
+                EditorUtility.DisplayDialog ("Error", "Name cannot be empty!", "Ok");
+                return;
+            }
+
+            // clear the name field
+            GUI.SetNextControlName ("Name");
+            newItemName = string.Empty;
+            GUI.FocusControl ("Name");
+
+            RefreshDatabase ();
             EditorUtility.SetDirty (items);
+            copiedValues = false;
             state = State.BLANK;
         }
 
         if (GUILayout.Button ("Cancel", GUILayout.Width (100))) {
+            // set back to original values
+            items.Item (selectedItem).name = copiedName;
+
+            // clear the name field
+            GUI.SetNextControlName ("Name");
             newItemName = string.Empty;
-            //newWeaponDamage = 0;
+            GUI.FocusControl ("Name");
+
+            newItemRequirements.Clear ();
+            itemPopUpIndex.Clear ();
+            newItemRequirementAmount.Clear ();
+            copiedValues = false;
 
             state = State.BLANK;
         }
     }
 
     void DisplayAddMainArea () {
+        // display item name
         newItemName = EditorGUILayout.TextField (new GUIContent ("Name:"), newItemName);
-        itemPopUpIndex = EditorGUILayout.Popup ("Requirements:", itemPopUpIndex, GetItemPopUpList ());
-        
-        var serializedObject = new SerializedObject (this);
-        var serializedProperty = serializedObject.FindProperty ("ItemRequirements");
-        EditorGUILayout.PropertyField (serializedProperty, true);
-        serializedObject.ApplyModifiedProperties ();
-        
-        //newWeaponDamage = Convert.ToInt32(EditorGUILayout.TextField(new GUIContent("Damage: "), newWeaponDamage.ToString()));
+
+        // display item requirements
+        if (itemsList.arraySize > 0) {
+            if (GUILayout.Button ("Add Requirement", GUILayout.MaxWidth (130), GUILayout.MaxHeight (20))) {
+                newItemRequirements.Add (new ItemRequirements ("", 0));
+                itemPopUpIndex.Add (0);
+                newItemRequirementAmount.Add (0);
+            }
+
+            if (newItemRequirements.Count > 0) {
+                for (var i = 0; i < newItemRequirements.Count; i++) {
+                    EditorGUILayout.LabelField ("Requirement " + (i + 1));
+                    itemPopUpIndex[i] = EditorGUILayout.Popup ("Item:", itemPopUpIndex[i], GetItemPopUpList ());
+                    newItemRequirementAmount[i] = EditorGUILayout.IntField (new GUIContent ("Amount:"), newItemRequirementAmount[i]);
+
+                    if (GUILayout.Button ("Remove Requirement")) {
+                        newItemRequirements.RemoveAt (i);
+                    }
+                }
+            }
+        }
 
         EditorGUILayout.Space ();
 
-        if (GUILayout.Button ("Add", GUILayout.Width (100))) {
-            items.Add (new Item (newItemName));
-            items.SortAlphabeticallyAtoZ ();
+        if (GUILayout.Button ("Create", GUILayout.Width (100))) {
+            // data validation
+            if (newItemName.IsNullOrEmpty ()) {
+                EditorUtility.DisplayDialog ("Error", "Name cannot be empty!", "Ok");
+                return;
+            }
+
+            for (var i = 0; i < newItemRequirements.Count; i++) {
+                // data validation
+                if (newItemRequirementAmount[i] == 0) {
+                    EditorUtility.DisplayDialog ("Error", "Amount cannot be zero!", "Ok");
+                    return;
+                }
+
+                newItemRequirements[i].item = itemPopUp[itemPopUpIndex[i]];
+                newItemRequirements[i].amount = newItemRequirementAmount[i];
+            }
+
+            items.Add (new Item (newItemName, newItemRequirements.ToArray ()));
+
+            RefreshDatabase ();
 
             newItemName = string.Empty;
-            //newWeaponDamage = 0;
+            newItemRequirements.Clear ();
+            itemPopUpIndex.Clear ();
+            newItemRequirementAmount.Clear ();
+
             EditorUtility.SetDirty (items);
             state = State.BLANK;
         }
 
         if (GUILayout.Button ("Cancel", GUILayout.Width (100))) {
+            // clear the name field
+            GUI.SetNextControlName ("Name");
             newItemName = string.Empty;
-            //newWeaponDamage = 0;
+            GUI.FocusControl ("Name");
+
+            newItemRequirements.Clear ();
+            itemPopUpIndex.Clear ();
+            newItemRequirementAmount.Clear ();
 
             state = State.BLANK;
         }
+    }
+
+    void RefreshDatabase () {
+        itemsDatabaseObject = new SerializedObject (items);
+        itemsList = itemsDatabaseObject.FindProperty ("database");
+        items.SortAlphabeticallyAtoZ ();
+    }
+
+    bool CanRemoveItem (string itemName) {
+        for (var i = 0; i < items.Count; i++) {
+            foreach (var t in items.Item (i).requirements) {
+                if (itemName == t.item) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     void LoadGameData () {

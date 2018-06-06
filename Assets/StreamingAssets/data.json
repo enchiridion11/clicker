@@ -1,1 +1,1 @@
-{"database":[{"name":"Stone"},{"name":"Stone Furnace"}]}
+{"database":[{"name":"Stone","requirements":[]},{"name":"Stone Furnace","requirements":[{"item":"Stone","amount":5}]}]}

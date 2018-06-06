@@ -12,7 +12,5 @@ MonoBehaviour:
   m_Name: itemDB
   m_EditorClassIdentifier: 
   database:
-  - name: 
-    itemRequirements:
-      item: 
-      amount: 0
+  - name: Stone
+    requirements: []
