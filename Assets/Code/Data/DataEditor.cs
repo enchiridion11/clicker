@@ -105,8 +105,14 @@ public class DataEditor : EditorWindow {
             EditorGUILayout.BeginHorizontal ();
             if (GUILayout.Button ("-", GUILayout.Width (25))) {
                 // make sure item is not being used as requirement in another item
-                if (!CanRemoveItem (items.Item (i).name)) {
-                    EditorUtility.DisplayDialog ("Warning", "Cannot delete " + items.Item (i).name + ", it is another items requirement!", "Ok");
+                var itemUsage = GetItemUsage (items.Item (i).name);
+                if (itemUsage.Count > 0) {
+                    var list = "\n";
+                    foreach (var t in itemUsage) {
+                        list += "\n" + t;
+                    }
+
+                    EditorUtility.DisplayDialog ("Warning", "Cannot delete " + items.Item (i).name + ", it is being used in:" + list, "Ok");
                     return;
                 }
 
@@ -117,6 +123,7 @@ public class DataEditor : EditorWindow {
                 newItemName = string.Empty;
                 GUI.FocusControl ("Name");
 
+                copiedValues = false;
                 RefreshDatabase ();
                 EditorUtility.SetDirty (items);
                 state = State.BLANK;
@@ -130,9 +137,16 @@ public class DataEditor : EditorWindow {
                     newItemName = copiedName;
                     GUI.FocusControl ("Name");
                     items.Item (selectedItem).name = copiedName;
+
+                    for (var j = 0; j < items.Item (selectedItem).requirements.Length; j++) {
+                        items.Item (selectedItem).requirements[j].item = newItemRequirements[j].item;
+                        items.Item (selectedItem).requirements[j].amount = newItemRequirements[j].amount;
+                    }
+
                     copiedValues = false;
                 }
 
+                newItemRequirements.Clear ();
                 selectedItem = i;
                 state = State.EDIT;
             }
@@ -146,6 +160,14 @@ public class DataEditor : EditorWindow {
         EditorGUILayout.LabelField ("Items: " + items.Count, GUILayout.Width (100));
 
         if (GUILayout.Button ("New Item")) {
+            newItemRequirements.Clear ();
+            copiedValues = false;
+
+            // clear the name field
+            GUI.SetNextControlName ("Name");
+            newItemName = string.Empty;
+            GUI.FocusControl ("Name");
+
             state = State.ADD;
         }
 
@@ -188,9 +210,24 @@ public class DataEditor : EditorWindow {
     }
 
     void DisplayEditMainArea () {
-        // store data for cancel
+        // only run this code once
         if (!copiedValues) {
             copiedName = items.Item (selectedItem).name;
+            for (var i = 0; i < items.Item (selectedItem).requirements.Length; i++) {
+                itemPopUpIndex.Add (i);
+                GetItemPopUpList ();
+                var newItemRequirementsName = string.Empty;
+                for (var j = 0; j < itemPopUp.Count; j++) {
+                    if (items.Item (selectedItem).requirements[i].item == itemPopUp[j]) {
+                        itemPopUpIndex[i] = j;
+                        newItemRequirementsName = itemPopUp[j];
+                        break;
+                    }
+                }
+
+                newItemRequirements.Add (new ItemRequirements (newItemRequirementsName, items.Item (selectedItem).requirements[i].amount));
+            }
+
             copiedValues = true;
         }
 
@@ -200,7 +237,7 @@ public class DataEditor : EditorWindow {
         // display selected item current requirements (if any)
         for (var i = 0; i < items.Item (selectedItem).requirements.Length; i++) {
             EditorGUILayout.LabelField ("Requirement " + (i + 1));
-            // itemPopUpIndexUpdate = EditorGUILayout.Popup ("Item:", selectedItem, GetItemPopUpList ());
+            itemPopUpIndex[i] = EditorGUILayout.Popup ("Item:", itemPopUpIndex[i], GetItemPopUpList ());
             items.Item (selectedItem).requirements[i].amount = EditorGUILayout.IntField (new GUIContent ("Amount:"), items.Item (selectedItem).requirements[i].amount);
         }
 
@@ -214,12 +251,28 @@ public class DataEditor : EditorWindow {
                 return;
             }
 
+            for (var i = 0; i < items.Item (selectedItem).requirements.Length; i++) {
+                items.Item (selectedItem).requirements[i].item = IndexToString (itemPopUpIndex[i]);
+
+                // data validation
+                if (items.Item (selectedItem).requirements[i].item == items.Item (selectedItem).name) {
+                    EditorUtility.DisplayDialog ("Error", "Item cannot require itself!", "Ok");
+                    return;
+                }
+
+                if (items.Item (selectedItem).requirements[i].amount == 0) {
+                    EditorUtility.DisplayDialog ("Error", "Amount cannot be zero!", "Ok");
+                    return;
+                }
+            }
+
             // clear the name field
             GUI.SetNextControlName ("Name");
             newItemName = string.Empty;
             GUI.FocusControl ("Name");
 
             RefreshDatabase ();
+
             EditorUtility.SetDirty (items);
             copiedValues = false;
             state = State.BLANK;
@@ -228,6 +281,11 @@ public class DataEditor : EditorWindow {
         if (GUILayout.Button ("Cancel", GUILayout.Width (100))) {
             // set back to original values
             items.Item (selectedItem).name = copiedName;
+
+            for (var i = 0; i < items.Item (selectedItem).requirements.Length; i++) {
+                items.Item (selectedItem).requirements[i].item = newItemRequirements[i].item;
+                items.Item (selectedItem).requirements[i].amount = newItemRequirements[i].amount;
+            }
 
             // clear the name field
             GUI.SetNextControlName ("Name");
@@ -263,6 +321,15 @@ public class DataEditor : EditorWindow {
 
                     if (GUILayout.Button ("Remove Requirement")) {
                         newItemRequirements.RemoveAt (i);
+
+                        // reset fields
+                        GUI.SetNextControlName ("Item");
+                        itemPopUpIndex[i] = 0;
+                        GUI.FocusControl ("Item");
+
+                        GUI.SetNextControlName ("Amount");
+                        newItemRequirementAmount[i] = 0;
+                        GUI.FocusControl ("Amount");
                     }
                 }
             }
@@ -284,11 +351,12 @@ public class DataEditor : EditorWindow {
                     return;
                 }
 
+                // all good, create the item
                 newItemRequirements[i].item = itemPopUp[itemPopUpIndex[i]];
                 newItemRequirements[i].amount = newItemRequirementAmount[i];
             }
 
-            items.Add (new Item (newItemName, newItemRequirements.ToArray ()));
+            //items.Add (new Item (newItemName, newItemRequirements.ToArray ()));
 
             RefreshDatabase ();
 
@@ -316,21 +384,34 @@ public class DataEditor : EditorWindow {
     }
 
     void RefreshDatabase () {
-        itemsDatabaseObject = new SerializedObject (items);
-        itemsList = itemsDatabaseObject.FindProperty ("database");
+        itemsDatabaseObject.ApplyModifiedProperties ();
+        
+       /* itemsDatabaseObject = new SerializedObject (items);
+        itemsList = itemsDatabaseObject.FindProperty ("database");*/
         items.SortAlphabeticallyAtoZ ();
     }
 
-    bool CanRemoveItem (string itemName) {
+    List<string> GetItemUsage (string itemName) {
+        var itemsInUse = new List<string> ();
         for (var i = 0; i < items.Count; i++) {
             foreach (var t in items.Item (i).requirements) {
                 if (itemName == t.item) {
-                    return false;
+                    itemsInUse.Add (items.Item (i).name);
                 }
             }
         }
 
-        return true;
+        return itemsInUse;
+    }
+
+    string IndexToString (int index) {
+        foreach (var t in itemPopUp) {
+            if (itemPopUp[index] == t) {
+                return itemPopUp[index];
+            }
+        }
+
+        return null;
     }
 
     void LoadGameData () {
@@ -355,7 +436,7 @@ public class DataEditor : EditorWindow {
             File.WriteAllText (filePath, dataAsJson);
         }
         catch (Exception e) {
-            Debug.LogError (e);
+            EditorUtility.DisplayDialog ("Error", "Data could not be saved! \n \n Error message:" + e, "Ok");
             return;
         }
 
