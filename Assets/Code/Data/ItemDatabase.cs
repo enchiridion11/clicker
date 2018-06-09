@@ -6,7 +6,6 @@ using UnityEngine;
 public class ItemDatabase : ScriptableObject {
     #region Fields
 
-    [SerializeField]
     public List<Item> database;
 
     #endregion

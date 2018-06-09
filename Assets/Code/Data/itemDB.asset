@@ -11,6 +11,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f273ffe577fc05f4ca9c9213b5c05d1c, type: 3}
   m_Name: itemDB
   m_EditorClassIdentifier: 
-  database:
-  - name: Stone
-    requirements: []
+  database: []

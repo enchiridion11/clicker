@@ -4,10 +4,9 @@
 public class Item {
     #region Fields
 
-    [SerializeField]
     public string name;
+    public string description;
 
-    [SerializeField]
     public ItemRequirements[] requirements;
 
     #endregion
@@ -21,6 +20,7 @@ public class Item {
     public Item (string name, ItemRequirements[] requirements) {
         //ID = id;
         this.name = name;
+       // this.description = description;
         this.requirements = requirements;
     }
 

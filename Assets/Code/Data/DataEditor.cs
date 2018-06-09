@@ -74,18 +74,11 @@ public class DataEditor : EditorWindow {
         itemPopUp = new List<string> (items.Count);
         itemsDatabaseObject = new SerializedObject (items);
         itemsList = itemsDatabaseObject.FindProperty ("database");
+        Debug.Log (itemsList);
 
         if (items == null) {
             CreateDatabase ();
         }
-    }
-
-    string[] GetItemPopUpList () {
-        for (var i = 0; i < items.Count; i++) {
-            itemPopUp.Add (items.Item (i).name);
-        }
-
-        return itemPopUp.ToArray ();
     }
 
     void CreateDatabase () {
@@ -117,6 +110,7 @@ public class DataEditor : EditorWindow {
                 }
 
                 items.RemoveAt (i);
+                RemoveItemFromPopUpList (i);
 
                 // clear the name field
                 GUI.SetNextControlName ("Name");
@@ -215,7 +209,6 @@ public class DataEditor : EditorWindow {
             copiedName = items.Item (selectedItem).name;
             for (var i = 0; i < items.Item (selectedItem).requirements.Length; i++) {
                 itemPopUpIndex.Add (i);
-                GetItemPopUpList ();
                 var newItemRequirementsName = string.Empty;
                 for (var j = 0; j < itemPopUp.Count; j++) {
                     if (items.Item (selectedItem).requirements[i].item == itemPopUp[j]) {
@@ -302,8 +295,11 @@ public class DataEditor : EditorWindow {
     }
 
     void DisplayAddMainArea () {
+        //    var descriptionObject = itemsList.FindPropertyRelative ("description");
+
         // display item name
         newItemName = EditorGUILayout.TextField (new GUIContent ("Name:"), newItemName);
+        // descriptionObject.stringValue = EditorGUILayout.TextField ("Description: ", descriptionObject.stringValue);
 
         // display item requirements
         if (itemsList.arraySize > 0) {
@@ -356,7 +352,9 @@ public class DataEditor : EditorWindow {
                 newItemRequirements[i].amount = newItemRequirementAmount[i];
             }
 
-            //items.Add (new Item (newItemName, newItemRequirements.ToArray ()));
+            items.Add (new Item (newItemName, newItemRequirements.ToArray ()));
+            // items.Add (new Item (newItemName, descriptionObject.stringValue, newItemRequirements.ToArray ()));
+            AddItemToPopUpList (newItemName);
 
             RefreshDatabase ();
 
@@ -384,10 +382,10 @@ public class DataEditor : EditorWindow {
     }
 
     void RefreshDatabase () {
-        itemsDatabaseObject.ApplyModifiedProperties ();
-        
-       /* itemsDatabaseObject = new SerializedObject (items);
-        itemsList = itemsDatabaseObject.FindProperty ("database");*/
+        // itemsDatabaseObject.ApplyModifiedProperties ();
+
+        itemsDatabaseObject = new SerializedObject (items);
+        itemsList = itemsDatabaseObject.FindProperty ("database");
         items.SortAlphabeticallyAtoZ ();
     }
 
@@ -402,6 +400,18 @@ public class DataEditor : EditorWindow {
         }
 
         return itemsInUse;
+    }
+
+    void AddItemToPopUpList (string item) {
+        itemPopUp.Add (item);
+    }
+
+    void RemoveItemFromPopUpList (int index) {
+        itemPopUp.RemoveAt (index);
+    }
+
+    string[] GetItemPopUpList () {
+        return itemPopUp.ToArray ();
     }
 
     string IndexToString (int index) {
