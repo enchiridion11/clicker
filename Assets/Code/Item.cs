@@ -1,13 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
 
 [System.Serializable]
 public class Item {
     #region Fields
 
     public string name;
-    public string description;
+    //public string description;
 
-    public ItemRequirements[] requirements;
+    public List<ItemRequirements> requirements;
 
     #endregion
 
@@ -17,8 +17,7 @@ public class Item {
 
     #region Constructors
 
-    public Item (string name, ItemRequirements[] requirements) {
-        //ID = id;
+    public Item (string name,  List<ItemRequirements> requirements) {
         this.name = name;
        // this.description = description;
         this.requirements = requirements;

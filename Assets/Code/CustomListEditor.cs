@@ -86,7 +86,7 @@ public class CustomListEditor : EditorWindow {
         EditorGUILayout.LabelField ("Add a new item with a button");
 
         if (GUILayout.Button ("Add New")) {
-            t.MyList.Add (new CustomList.MyClass ());
+         //   t.MyList.Add (new CustomList.MyClass ());
         }
 
         EditorGUILayout.Space ();

@@ -33,14 +33,21 @@ public class DataEditor : EditorWindow {
 
     int selectedItem;
 
-    bool copiedValues;
-
-    SerializedObject itemsDatabaseObject;
-    SerializedProperty itemsList;
-
-    ItemDatabase items;
+    bool hasLooped;
 
     Vector2 scrollPosition = Vector2.zero;
+
+    // database
+    ItemDatabase itemDb;
+
+    SerializedObject itemDbObject;
+    SerializedProperty itemDbList;
+
+    // item class
+    SerializedProperty itemName;
+    SerializedProperty requirementsArray;
+    SerializedProperty requirementName;
+    SerializedProperty requirementAmount;
 
     #endregion
 
@@ -49,7 +56,7 @@ public class DataEditor : EditorWindow {
     #region Unity
 
     void OnEnable () {
-        if (items == null)
+        if (itemDb == null)
             LoadDatabase ();
 
         state = State.BLANK;
@@ -70,20 +77,21 @@ public class DataEditor : EditorWindow {
     }
 
     void LoadDatabase () {
-        items = (ItemDatabase) AssetDatabase.LoadAssetAtPath (AssetPath, typeof(ItemDatabase));
-        itemPopUp = new List<string> (items.Count);
-        itemsDatabaseObject = new SerializedObject (items);
-        itemsList = itemsDatabaseObject.FindProperty ("database");
-        Debug.Log (itemsList);
+        itemDb = (ItemDatabase) AssetDatabase.LoadAssetAtPath (AssetPath, typeof(ItemDatabase));
 
-        if (items == null) {
+        if (itemDb == null) {
             CreateDatabase ();
         }
+
+        itemPopUp = new List<string> (itemDb.Count);
+
+        itemDbObject = new SerializedObject (itemDb);
+        itemDbList = itemDbObject.FindProperty ("database");
     }
 
     void CreateDatabase () {
-        items = CreateInstance<ItemDatabase> ();
-        AssetDatabase.CreateAsset (items, AssetPath);
+        itemDb = CreateInstance<ItemDatabase> ();
+        AssetDatabase.CreateAsset (itemDb, AssetPath);
         AssetDatabase.SaveAssets ();
         AssetDatabase.Refresh ();
     }
@@ -94,22 +102,23 @@ public class DataEditor : EditorWindow {
 
         scrollPosition = EditorGUILayout.BeginScrollView (scrollPosition, "box", GUILayout.ExpandHeight (true));
 
-        for (var i = 0; i < items.Count; i++) {
+        for (var i = 0; i < itemDb.Count; i++) {
             EditorGUILayout.BeginHorizontal ();
             if (GUILayout.Button ("-", GUILayout.Width (25))) {
                 // make sure item is not being used as requirement in another item
-                var itemUsage = GetItemUsage (items.Item (i).name);
+                var itemUsage = GetItemUsage (itemDb.Item (i).name);
+
                 if (itemUsage.Count > 0) {
                     var list = "\n";
                     foreach (var t in itemUsage) {
                         list += "\n" + t;
                     }
 
-                    EditorUtility.DisplayDialog ("Warning", "Cannot delete " + items.Item (i).name + ", it is being used in:" + list, "Ok");
+                    EditorUtility.DisplayDialog ("Warning", "Cannot delete " + itemDb.Item (i).name + ", it is being used in:" + list, "Ok");
                     return;
                 }
 
-                items.RemoveAt (i);
+                itemDb.RemoveAt (i);
                 RemoveItemFromPopUpList (i);
 
                 // clear the name field
@@ -117,27 +126,27 @@ public class DataEditor : EditorWindow {
                 newItemName = string.Empty;
                 GUI.FocusControl ("Name");
 
-                copiedValues = false;
+                hasLooped = false;
                 RefreshDatabase ();
-                EditorUtility.SetDirty (items);
+                EditorUtility.SetDirty (itemDb);
                 state = State.BLANK;
                 return;
             }
 
-            if (GUILayout.Button (items.Item (i).name, "box", GUILayout.ExpandWidth (true))) {
+            if (GUILayout.Button (itemDb.Item (i).name, "box", GUILayout.ExpandWidth (true))) {
                 // reset names back to copied name
-                if (copiedValues) {
+                if (hasLooped) {
                     GUI.SetNextControlName ("Name");
                     newItemName = copiedName;
                     GUI.FocusControl ("Name");
-                    items.Item (selectedItem).name = copiedName;
+                    itemDb.Item (selectedItem).name = copiedName;
 
-                    for (var j = 0; j < items.Item (selectedItem).requirements.Length; j++) {
-                        items.Item (selectedItem).requirements[j].item = newItemRequirements[j].item;
-                        items.Item (selectedItem).requirements[j].amount = newItemRequirements[j].amount;
-                    }
+                    /*  for (var j = 0; j < itemsDb.Item (selectedItem).requirements.Length; j++) {
+                          itemsDb.Item (selectedItem).requirements[j].item = newItemRequirements[j].item;
+                          itemsDb.Item (selectedItem).requirements[j].amount = newItemRequirements[j].amount;
+                      }*/
 
-                    copiedValues = false;
+                    hasLooped = false;
                 }
 
                 newItemRequirements.Clear ();
@@ -151,16 +160,14 @@ public class DataEditor : EditorWindow {
         EditorGUILayout.EndScrollView ();
 
         EditorGUILayout.BeginHorizontal (GUILayout.ExpandWidth (true));
-        EditorGUILayout.LabelField ("Items: " + items.Count, GUILayout.Width (100));
+        EditorGUILayout.LabelField ("Items: " + itemDb.Count, GUILayout.Width (100));
 
         if (GUILayout.Button ("New Item")) {
-            newItemRequirements.Clear ();
-            copiedValues = false;
+            hasLooped = false;
 
-            // clear the name field
-            GUI.SetNextControlName ("Name");
-            newItemName = string.Empty;
-            GUI.FocusControl ("Name");
+             itemDbList.InsertArrayElementAtIndex (itemDbList.arraySize);
+            //itemDb.database.Add (new Item ("", new List<ItemRequirements> ()));
+            RefreshDatabase ();
 
             state = State.ADD;
         }
@@ -205,59 +212,59 @@ public class DataEditor : EditorWindow {
 
     void DisplayEditMainArea () {
         // only run this code once
-        if (!copiedValues) {
-            copiedName = items.Item (selectedItem).name;
-            for (var i = 0; i < items.Item (selectedItem).requirements.Length; i++) {
-                itemPopUpIndex.Add (i);
-                var newItemRequirementsName = string.Empty;
-                for (var j = 0; j < itemPopUp.Count; j++) {
-                    if (items.Item (selectedItem).requirements[i].item == itemPopUp[j]) {
-                        itemPopUpIndex[i] = j;
-                        newItemRequirementsName = itemPopUp[j];
-                        break;
-                    }
-                }
+        if (!hasLooped) {
+            copiedName = itemDb.Item (selectedItem).name;
+            /* for (var i = 0; i < itemsDb.Item (selectedItem).requirements.Length; i++) {
+                 itemPopUpIndex.Add (i);
+                 var newItemRequirementsName = string.Empty;
+                 for (var j = 0; j < itemPopUp.Count; j++) {
+                     if (itemsDb.Item (selectedItem).requirements[i].item == itemPopUp[j]) {
+                         itemPopUpIndex[i] = j;
+                         newItemRequirementsName = itemPopUp[j];
+                         break;
+                     }
+                 }
+ 
+                 newItemRequirements.Add (new ItemRequirements (newItemRequirementsName, itemsDb.Item (selectedItem).requirements[i].amount));
+             }*/
 
-                newItemRequirements.Add (new ItemRequirements (newItemRequirementsName, items.Item (selectedItem).requirements[i].amount));
-            }
-
-            copiedValues = true;
+            hasLooped = true;
         }
 
         // display selected item current name
-        items.Item (selectedItem).name = EditorGUILayout.TextField (new GUIContent ("Name:"), items.Item (selectedItem).name);
+        itemDb.Item (selectedItem).name = EditorGUILayout.TextField (new GUIContent ("Name:"), itemDb.Item (selectedItem).name);
 
         // display selected item current requirements (if any)
-        for (var i = 0; i < items.Item (selectedItem).requirements.Length; i++) {
+        /*for (var i = 0; i < itemsDb.Item (selectedItem).requirements.Length; i++) {
             EditorGUILayout.LabelField ("Requirement " + (i + 1));
             itemPopUpIndex[i] = EditorGUILayout.Popup ("Item:", itemPopUpIndex[i], GetItemPopUpList ());
-            items.Item (selectedItem).requirements[i].amount = EditorGUILayout.IntField (new GUIContent ("Amount:"), items.Item (selectedItem).requirements[i].amount);
-        }
+            itemsDb.Item (selectedItem).requirements[i].amount = EditorGUILayout.IntField (new GUIContent ("Amount:"), itemsDb.Item (selectedItem).requirements[i].amount);
+        }*/
 
 
         EditorGUILayout.Space ();
 
         if (GUILayout.Button ("Update", GUILayout.Width (100))) {
             // data validation
-            if (items.Item (selectedItem).name.IsNullOrEmpty ()) {
+            if (itemDb.Item (selectedItem).name.IsNullOrEmpty ()) {
                 EditorUtility.DisplayDialog ("Error", "Name cannot be empty!", "Ok");
                 return;
             }
 
-            for (var i = 0; i < items.Item (selectedItem).requirements.Length; i++) {
-                items.Item (selectedItem).requirements[i].item = IndexToString (itemPopUpIndex[i]);
-
-                // data validation
-                if (items.Item (selectedItem).requirements[i].item == items.Item (selectedItem).name) {
-                    EditorUtility.DisplayDialog ("Error", "Item cannot require itself!", "Ok");
-                    return;
-                }
-
-                if (items.Item (selectedItem).requirements[i].amount == 0) {
-                    EditorUtility.DisplayDialog ("Error", "Amount cannot be zero!", "Ok");
-                    return;
-                }
-            }
+            /* for (var i = 0; i < itemsDb.Item (selectedItem).requirements.Length; i++) {
+                 itemsDb.Item (selectedItem).requirements[i].item = IndexToString (itemPopUpIndex[i]);
+ 
+                 // data validation
+                 if (itemsDb.Item (selectedItem).requirements[i].item == itemsDb.Item (selectedItem).name) {
+                     EditorUtility.DisplayDialog ("Error", "Item cannot require itself!", "Ok");
+                     return;
+                 }
+ 
+                 if (itemsDb.Item (selectedItem).requirements[i].amount == 0) {
+                     EditorUtility.DisplayDialog ("Error", "Amount cannot be zero!", "Ok");
+                     return;
+                 }
+             }*/
 
             // clear the name field
             GUI.SetNextControlName ("Name");
@@ -266,19 +273,19 @@ public class DataEditor : EditorWindow {
 
             RefreshDatabase ();
 
-            EditorUtility.SetDirty (items);
-            copiedValues = false;
+            EditorUtility.SetDirty (itemDb);
+            hasLooped = false;
             state = State.BLANK;
         }
 
         if (GUILayout.Button ("Cancel", GUILayout.Width (100))) {
             // set back to original values
-            items.Item (selectedItem).name = copiedName;
+            itemDb.Item (selectedItem).name = copiedName;
 
-            for (var i = 0; i < items.Item (selectedItem).requirements.Length; i++) {
-                items.Item (selectedItem).requirements[i].item = newItemRequirements[i].item;
-                items.Item (selectedItem).requirements[i].amount = newItemRequirements[i].amount;
-            }
+            /* for (var i = 0; i < itemsDb.Item (selectedItem).requirements.Length; i++) {
+                 itemsDb.Item (selectedItem).requirements[i].item = newItemRequirements[i].item;
+                 itemsDb.Item (selectedItem).requirements[i].amount = newItemRequirements[i].amount;
+             }*/
 
             // clear the name field
             GUI.SetNextControlName ("Name");
@@ -288,82 +295,69 @@ public class DataEditor : EditorWindow {
             newItemRequirements.Clear ();
             itemPopUpIndex.Clear ();
             newItemRequirementAmount.Clear ();
-            copiedValues = false;
+            hasLooped = false;
 
             state = State.BLANK;
         }
     }
 
     void DisplayAddMainArea () {
-        //    var descriptionObject = itemsList.FindPropertyRelative ("description");
+        var itemsArray = itemDbList.GetArrayElementAtIndex (itemDbList.arraySize - 1);
+        itemName = itemsArray.FindPropertyRelative ("name");
+        requirementsArray = itemsArray.FindPropertyRelative ("requirements");
+        itemName.stringValue = EditorGUILayout.TextField ("Name", itemName.stringValue);
 
-        // display item name
-        newItemName = EditorGUILayout.TextField (new GUIContent ("Name:"), newItemName);
-        // descriptionObject.stringValue = EditorGUILayout.TextField ("Description: ", descriptionObject.stringValue);
+        if (!hasLooped) {
+            //itemName.stringValue = string.Empty;
+            hasLooped = true;
+        }
 
-        // display item requirements
-        if (itemsList.arraySize > 0) {
-            if (GUILayout.Button ("Add Requirement", GUILayout.MaxWidth (130), GUILayout.MaxHeight (20))) {
-                newItemRequirements.Add (new ItemRequirements ("", 0));
-                itemPopUpIndex.Add (0);
-                newItemRequirementAmount.Add (0);
-            }
+        if (GUILayout.Button ("Add Requirement")) {
+            requirementsArray.InsertArrayElementAtIndex (requirementsArray.arraySize);
+        }
 
-            if (newItemRequirements.Count > 0) {
-                for (var i = 0; i < newItemRequirements.Count; i++) {
-                    EditorGUILayout.LabelField ("Requirement " + (i + 1));
-                    itemPopUpIndex[i] = EditorGUILayout.Popup ("Item:", itemPopUpIndex[i], GetItemPopUpList ());
-                    newItemRequirementAmount[i] = EditorGUILayout.IntField (new GUIContent ("Amount:"), newItemRequirementAmount[i]);
+        for (var i = 0; i < requirementsArray.arraySize; i++) {
+            requirementName = requirementsArray.GetArrayElementAtIndex (i).FindPropertyRelative ("item");
+            requirementAmount = requirementsArray.GetArrayElementAtIndex (i).FindPropertyRelative ("amount");
 
-                    if (GUILayout.Button ("Remove Requirement")) {
-                        newItemRequirements.RemoveAt (i);
+            EditorGUILayout.LabelField ("Requirement " + (i + 1));
+            requirementName.stringValue = EditorGUILayout.TextField ("Item", requirementName.stringValue);
+            requirementAmount.intValue = EditorGUILayout.IntField ("Amount", requirementAmount.intValue);
 
-                        // reset fields
-                        GUI.SetNextControlName ("Item");
-                        itemPopUpIndex[i] = 0;
-                        GUI.FocusControl ("Item");
 
-                        GUI.SetNextControlName ("Amount");
-                        newItemRequirementAmount[i] = 0;
-                        GUI.FocusControl ("Amount");
-                    }
-                }
+            if (GUILayout.Button ("Remove Requirement")) {
+                requirementsArray.DeleteArrayElementAtIndex (i);
             }
         }
+
+        //Apply the changes to the list
+        itemDbObject.ApplyModifiedProperties ();
 
         EditorGUILayout.Space ();
 
         if (GUILayout.Button ("Create", GUILayout.Width (100))) {
             // data validation
-            if (newItemName.IsNullOrEmpty ()) {
+            if (itemName.stringValue.IsNullOrEmpty ()) {
                 EditorUtility.DisplayDialog ("Error", "Name cannot be empty!", "Ok");
                 return;
             }
 
-            for (var i = 0; i < newItemRequirements.Count; i++) {
+            for (var i = 0; i < requirementsArray.arraySize; i++) {
                 // data validation
-                if (newItemRequirementAmount[i] == 0) {
-                    EditorUtility.DisplayDialog ("Error", "Amount cannot be zero!", "Ok");
+                if (requirementsArray.GetArrayElementAtIndex (i).FindPropertyRelative ("item").stringValue.IsNullOrEmpty ()) {
+                    EditorUtility.DisplayDialog ("Error", "Item cannot be empty!", "Ok");
                     return;
                 }
 
-                // all good, create the item
-                newItemRequirements[i].item = itemPopUp[itemPopUpIndex[i]];
-                newItemRequirements[i].amount = newItemRequirementAmount[i];
+                if (requirementsArray.GetArrayElementAtIndex (i).FindPropertyRelative ("amount").intValue == 0) {
+                    EditorUtility.DisplayDialog ("Error", "Amount cannot be zero!", "Ok");
+                    return;
+                }
             }
 
-            items.Add (new Item (newItemName, newItemRequirements.ToArray ()));
-            // items.Add (new Item (newItemName, descriptionObject.stringValue, newItemRequirements.ToArray ()));
-            AddItemToPopUpList (newItemName);
+            AddItemToPopUpList (itemName.stringValue);
 
-            RefreshDatabase ();
-
-            newItemName = string.Empty;
-            newItemRequirements.Clear ();
-            itemPopUpIndex.Clear ();
-            newItemRequirementAmount.Clear ();
-
-            EditorUtility.SetDirty (items);
+            EditorUtility.SetDirty (itemDb);
             state = State.BLANK;
         }
 
@@ -372,6 +366,8 @@ public class DataEditor : EditorWindow {
             GUI.SetNextControlName ("Name");
             newItemName = string.Empty;
             GUI.FocusControl ("Name");
+
+            itemDb.RemoveAt (selectedItem);
 
             newItemRequirements.Clear ();
             itemPopUpIndex.Clear ();
@@ -384,17 +380,17 @@ public class DataEditor : EditorWindow {
     void RefreshDatabase () {
         // itemsDatabaseObject.ApplyModifiedProperties ();
 
-        itemsDatabaseObject = new SerializedObject (items);
-        itemsList = itemsDatabaseObject.FindProperty ("database");
-        items.SortAlphabeticallyAtoZ ();
+        itemDbObject = new SerializedObject (itemDb);
+        itemDbList = itemDbObject.FindProperty ("database");
+        itemDb.SortAlphabeticallyAtoZ ();
     }
 
     List<string> GetItemUsage (string itemName) {
         var itemsInUse = new List<string> ();
-        for (var i = 0; i < items.Count; i++) {
-            foreach (var t in items.Item (i).requirements) {
+        for (var i = 0; i < itemDb.Count; i++) {
+            foreach (var t in itemDb.Item (i).requirements) {
                 if (itemName == t.item) {
-                    itemsInUse.Add (items.Item (i).name);
+                    itemsInUse.Add (itemDb.Item (i).name);
                 }
             }
         }
@@ -439,7 +435,7 @@ public class DataEditor : EditorWindow {
     }
 
     void SaveGameData () {
-        var dataAsJson = JsonUtility.ToJson (items);
+        var dataAsJson = JsonUtility.ToJson (itemDb);
 
         var filePath = Application.dataPath + JsonPath;
         try {

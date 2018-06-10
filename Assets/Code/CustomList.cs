@@ -2,16 +2,7 @@
 using UnityEngine;
 
 public class CustomList : ScriptableObject {
-    //This is our custom class with our variables
-    [System.Serializable]
-    public class MyClass {
-        public GameObject AnGO;
-        public int AnInt;
-        public float AnFloat;
-        public Vector3 AnVector3;
-        public int[] AnIntArray = new int[0];
-        public ItemRequirements ACustomClassArray;
-    }
+ 
 
     //This is our list we want to use to represent our class as an array.
     public List<MyClass> MyList = new List<MyClass> (1);
@@ -26,4 +17,15 @@ public class CustomList : ScriptableObject {
         //Remove an index position from our list at a point in our list array
         MyList.RemoveAt (index);
     }
+}
+
+//This is our custom class with our variables
+[System.Serializable]
+public class MyClass {
+    public GameObject AnGO;
+    public int AnInt;
+    public float AnFloat;
+    public Vector3 AnVector3;
+    public int[] AnIntArray = new int[0];
+    public ItemRequirements ACustomClassArray;
 }

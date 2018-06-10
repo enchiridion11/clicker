@@ -6,7 +6,7 @@ using UnityEngine;
 public class ItemDatabase : ScriptableObject {
     #region Fields
 
-    public List<Item> database;
+    public List<Item> database = new List<Item>();
 
     #endregion
 
@@ -18,10 +18,10 @@ public class ItemDatabase : ScriptableObject {
 
     #region Unity
 
-    void OnEnable () {
+   /* void OnEnable () {
         if (database == null)
             database = new List<Item> ();
-    }
+    }*/
 
     #endregion
 
