@@ -4,30 +4,20 @@
 public static class Data {
     #region Fields
 
-    public static Human[] Humans;
-    public static Pet[] Pets;
+    public static Item[] Items;
 
     #endregion
 
     #region Methods
 
-    public static Human GetHumanData (string id) {
-        Human data = null;
-        foreach (var human in Humans) {
-            if (human.Name == id) {
-                data = human;
+    public static Item GetItemData (string id) {
+        Item data = null;
+        foreach (var item in Items) {
+            if (item.name == id) {
+                data = item;
             }
         }
-        return data;
-    }
-    
-    public static Pet GetPetData (string id) {
-        Pet data = null;
-        foreach (var pet in Pets) {
-            if (pet.Name == id) {
-                data = pet;
-            }
-        }
+
         return data;
     }
 

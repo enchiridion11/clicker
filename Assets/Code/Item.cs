@@ -19,7 +19,6 @@ public class Item {
 
     public Item (string name,  List<ItemRequirements> requirements) {
         this.name = name;
-       // this.description = description;
         this.requirements = requirements;
     }
 

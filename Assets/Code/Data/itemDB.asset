@@ -103,10 +103,10 @@ MonoBehaviour:
   - name: House
     requirements:
     - item: Brick
-      amount: 5
+      amount: 10
     - item: Copper Bar
-      amount: 5
+      amount: 10
     - item: Iron Bar
-      amount: 5
+      amount: 10
     - item: Logs
-      amount: 5
+      amount: 10

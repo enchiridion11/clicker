@@ -22,34 +22,33 @@ public class DataManager : MonoBehaviour {
     #region Unity
 
     void Awake () {
-        StartCoroutine(LoadStatsFile());
+        StartCoroutine (LoadStatsFile ());
     }
 
     #endregion
 
     IEnumerator LoadStatsFile () {
-        var jsonFilePath = Path.Combine(Application.streamingAssetsPath, dataFile);
+        var jsonFilePath = Path.Combine (Application.streamingAssetsPath, dataFile);
 
         // if we're on the web, we have to wait until the WWW returns the real file path
-        if (jsonFilePath.Contains("://") || jsonFilePath.Contains(":///")) {
-            var www = new WWW(jsonFilePath);
+        if (jsonFilePath.Contains ("://") || jsonFilePath.Contains (":///")) {
+            var www = new WWW (jsonFilePath);
             yield return www;
-            LoadStats(new JSONObject(www.text));
+            LoadStats (new JSONObject (www.text));
         }
         else {
-            LoadStats(new JSONObject(File.ReadAllText(jsonFilePath)));
+            LoadStats (new JSONObject (File.ReadAllText (jsonFilePath)));
         }
     }
 
     void LoadStats (JSONObject data) {
         if (data != null) {
-            Data.Humans = DataConvert.JSONToHumans(data["Humans"]);
-            Data.Pets = DataConvert.JSONToPets(data["Pets"]);
+            Data.Items = DataConvert.JSONToItems (data["database"]);
 
-            DataVisualiser.Instance.Initialize();
+            InventoryManager.Instance.Initialize ();
         }
         else {
-            Debug.LogError("Cannot load data!");
+            Debug.LogError ("Cannot load data!");
         }
     }
 

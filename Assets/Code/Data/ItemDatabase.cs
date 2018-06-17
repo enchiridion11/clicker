@@ -18,11 +18,6 @@ public class ItemDatabase : ScriptableObject {
 
     #region Unity
 
-   /* void OnEnable () {
-        if (database == null)
-            database = new List<Item> ();
-    }*/
-
     #endregion
 
     public void Add (Item item) {

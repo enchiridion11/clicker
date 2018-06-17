@@ -158,7 +158,7 @@ public class DataEditor : EditorWindow {
 
         EditorGUILayout.EndScrollView ();
         EditorGUILayout.BeginHorizontal (GUILayout.ExpandWidth (true));
-        EditorGUILayout.LabelField ("Items: " + itemDb.Count, GUILayout.Width (50));
+        EditorGUILayout.LabelField ("Items: " + itemDb.Count, GUILayout.Width (75));
 
         GUI.color = colorGreen;
         if (GUILayout.Button ("New Item")) {

@@ -7,68 +7,56 @@ using UnityEngine;
 public static class DataConvert {
     #region Methods
 
-    public static Human[] JSONToHumans (JSONObject json) {
-        var humans = new List<Human>();
+    public static Item[] JSONToItems (JSONObject json) {
+        var items = new List<Item> ();
         for (var i = 0; i < json.list.Count; i++) {
             var data = json.list[i];
-            humans.Add(new Human(
-                data.ToStringSafe("id"),
-                data.ToStringSafe("name"),
-                data.ToIntSafe("age"),
-                data.ToBoolSafe("canFly"),
-                data.ToFloatSafe("speed"),
-                data.HasField("pet") ? JSONToPet(data["pet"]) : null
+            items.Add (new Item (
+                data.ToStringSafe ("name"),
+                data.HasField ("requirements") ? JSONToItemRequirements (data["requirements"]) : null
             ));
         }
 
-        return humans.ToArray();
+        return items.ToArray ();
     }
 
-    public static Pet JSONToPet (JSONObject json) {
-        return new Pet(
-            json.ToStringSafe("id"),
-            json.ToStringSafe("name"),
-            json.ToStringSafe("owner"),
-            json.ToIntSafe("age"),
-            json.ToBoolSafe("canFly"),
-            json.ToFloatSafe("speed"));
+    public static ItemRequirements JSONToItemRequirement (JSONObject json) {
+        return new ItemRequirements (
+            json.ToStringSafe ("item"),
+            json.ToIntSafe ("amount"));
     }
-    
-    public static Pet[] JSONToPets (JSONObject json) {
-        var pet = new List<Pet>();
+
+    public static List<ItemRequirements> JSONToItemRequirements (JSONObject json) {
+        var requirements = new List<ItemRequirements> ();
         for (var i = 0; i < json.list.Count; i++) {
             var data = json.list[i];
-            pet.Add(new Pet(
-                data.ToStringSafe("id"),
-                data.ToStringSafe("name"),
-                data.ToStringSafe("owner"),
-                data.ToIntSafe("age"),
-                data.ToBoolSafe("canFly"),
-                data.ToFloatSafe("speed")
+            requirements.Add (new ItemRequirements (
+                data.ToStringSafe ("item"),
+                data.ToIntSafe ("amount")
             ));
         }
 
-        return pet.ToArray();
+        return requirements;
     }
 
     static string ToStringSafe (this JSONObject json, string property) {
-        return json.HasField(property) ? json[property].str : string.Empty;
+        return json.HasField (property) ? json[property].str : string.Empty;
     }
 
     static int ToIntSafe (this JSONObject json, string property, int value = 0) {
-        return json.HasField(property) ? (int) json[property].n : value;
+        return json.HasField (property) ? (int) json[property].n : value;
     }
 
     static double ToDoubleSafe (this JSONObject json, string property, double value = 0) {
-        return json.HasField(property) ? json[property].n : value;
+        return json.HasField (property) ? json[property].n : value;
     }
 
     static float ToFloatSafe (this JSONObject json, string property) {
-        return json.HasField(property) ? json[property].n : 0.0f;
+        return json.HasField (property) ? json[property].n : 0.0f;
     }
 
     static bool ToBoolSafe (this JSONObject json, string property, bool value = false) {
-        return json.HasField(property) ? json[property].b : value;
+        return json.HasField (property) ? json[property].b : value;
     }
 
     #endregion
