@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,6 +22,16 @@ public class InventoryManager : MonoBehaviour {
     #region Properties
 
     public static InventoryManager Instance { get; private set; }
+
+    public List<InventorySlot> Slots {
+        get { return slots; }
+    }
+
+    #endregion
+
+    #region Events
+
+    public Action<string> OnAddMinedResource;
 
     #endregion
 
@@ -47,19 +58,53 @@ public class InventoryManager : MonoBehaviour {
     }
 
     void AddMinedResource (string name) {
-        if (slots[0].IsEmpty) {
-            var item = Instantiate (itemPrefab).GetComponent<InventoryItemPresenter> ();
-            item.Initialize (name);
-            item.transform.SetParent (slots[0].transform);
-            item.transform.localScale = Vector3.one;
-            item.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
+        if (!HasItem (name)) {
+            for (var i = 0; i < slots.Count; i++) {
+                if (slots[i].IsEmpty) {
+                    var item = Instantiate (itemPrefab).GetComponent<InventoryItemPresenter> ();
+                    item.Initialize (name);
+                    item.transform.SetParent (slots[i].transform);
+                    item.transform.localScale = Vector3.one;
+                    item.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
 
-            slots[0].Item = item;
-            slots[0].IsEmpty = false;
-            return;
+                    // add item to list
+                    slots[i].Item = item;
+                    print (slots[i].Item.Amount);
+
+                    slots[i].Item = item;
+                    slots[i].IsEmpty = false;
+                    break;
+                }
+            }
         }
 
-        slots[0].Item.IncreaseAmount ();
+        if (OnAddMinedResource != null) {
+            OnAddMinedResource (name);
+        }
+    }
+
+    public bool HasItem (string name) {
+        for (var i = 0; i < slots.Count; i++) {
+            if (!slots[i].IsEmpty) {
+                if (slots[i].Item.Name == name) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public int GetItemAmount (string name) {
+        for (var i = 0; i < slots.Count; i++) {
+            if (!slots[i].IsEmpty) {
+                if (slots[i].Item.Name == name) {
+                    return slots[i].Item.Amount;
+                }
+            }
+        }
+
+        return 0;
     }
 
     #endregion

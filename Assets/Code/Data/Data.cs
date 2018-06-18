@@ -1,4 +1,7 @@
-﻿/// <summary>
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+/// <summary>
 /// Class containing all JSON data locally.
 /// </summary>
 public static class Data {

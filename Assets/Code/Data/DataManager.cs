@@ -11,6 +11,15 @@ public class DataManager : MonoBehaviour {
     [SerializeField]
     string dataFile = "data.json";
 
+    [SerializeField]
+    MiningManager miningManager;
+
+    [SerializeField]
+    InventoryManager inventoryManager;
+
+    [SerializeField]
+    CraftingManager craftingManager;
+
     #endregion
 
     #region Events
@@ -21,7 +30,7 @@ public class DataManager : MonoBehaviour {
 
     #region Unity
 
-    void Awake () {
+    void OnEnable () {
         StartCoroutine (LoadStatsFile ());
     }
 
@@ -43,9 +52,13 @@ public class DataManager : MonoBehaviour {
 
     void LoadStats (JSONObject data) {
         if (data != null) {
+            // load database
             Data.Items = DataConvert.JSONToItems (data["database"]);
 
-            InventoryManager.Instance.Initialize ();
+            // start managers
+            miningManager.Initialize ();
+            inventoryManager.Initialize ();
+            craftingManager.Initialize ();
         }
         else {
             Debug.LogError ("Cannot load data!");

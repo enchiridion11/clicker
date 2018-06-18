@@ -20,7 +20,7 @@ MonoBehaviour:
     requirements: []
   - name: Coal
     requirements: []
-  - name: Wood
+  - name: Log
     requirements: []
   - name: Gold
     requirements: []
@@ -34,7 +34,7 @@ MonoBehaviour:
     requirements: []
   - name: Quarry
     requirements:
-    - item: Wood
+    - item: Log
       amount: 100
   - name: Copper Mine
     requirements:
@@ -42,7 +42,7 @@ MonoBehaviour:
       amount: 25
     - item: Copper
       amount: 25
-    - item: Wood
+    - item: Log
       amount: 25
   - name: Iron Mine
     requirements:
@@ -50,13 +50,13 @@ MonoBehaviour:
       amount: 25
     - item: Iron Ore
       amount: 25
-    - item: Wood
+    - item: Log
       amount: 25
   - name: Coal Mine
     requirements:
     - item: Stone
       amount: 50
-    - item: Wood
+    - item: Log
       amount: 50
   - name: Lumber Mill
     requirements:
@@ -70,7 +70,7 @@ MonoBehaviour:
       amount: 5
     - item: Coal
       amount: 5
-    - item: Wood
+    - item: Log
       amount: 5
   - name: Copper Bar
     requirements:
@@ -80,7 +80,7 @@ MonoBehaviour:
       amount: 5
     - item: Coal
       amount: 5
-    - item: Wood
+    - item: Log
       amount: 5
   - name: Iron Bar
     requirements:
@@ -90,17 +90,17 @@ MonoBehaviour:
       amount: 5
     - item: Coal
       amount: 5
-    - item: Wood
+    - item: Log
       amount: 5
-  - name: Logs
+  - name: Plank
     requirements:
     - item: Stone Furnace
       amount: 1
     - item: Coal
       amount: 5
-    - item: Wood
+    - item: Log
       amount: 10
-  - name: House
+  - name: Violin
     requirements:
     - item: Brick
       amount: 10
@@ -108,5 +108,5 @@ MonoBehaviour:
       amount: 10
     - item: Iron Bar
       amount: 10
-    - item: Logs
+    - item: Plank
       amount: 10

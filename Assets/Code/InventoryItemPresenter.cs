@@ -12,15 +12,25 @@ public class InventoryItemPresenter : MonoBehaviour {
 
     [SerializeField]
     TextMeshProUGUI amountText;
-    
+
     [SerializeField]
     ParticleSystem particles;
 
-    int amount;
+    string name;
+
+    int amount = 1;
 
     #endregion
 
     #region Properties
+
+    public string Name {
+        get { return name; }
+    }
+
+    public int Amount {
+        get { return amount; }
+    }
 
     #endregion
 
@@ -28,17 +38,27 @@ public class InventoryItemPresenter : MonoBehaviour {
 
     #region Unity
 
+    void OnEnable () {
+        InventoryManager.Instance.OnAddMinedResource += IncreaseAmount;
+    }
+
+    void OnDisable () {
+        InventoryManager.Instance.OnAddMinedResource -= IncreaseAmount;
+    }
+
     #endregion
 
     public void Initialize (string item) {
+        name = item;
         itemImage.sprite = GetItemIcon (item);
-        IncreaseAmount ();
     }
 
-    public void IncreaseAmount () {
-        amount++;
-        amountText.text = amount.ToString ();
-        particles.Play();
+    public void IncreaseAmount (string item) {
+        if (item == name) {
+            amountText.text = amount.ToString ();
+            amount++;
+            particles.Play ();
+        }
     }
 
     public void DecreaseAmount () {

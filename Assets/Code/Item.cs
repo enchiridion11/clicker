@@ -17,7 +17,7 @@ public class Item {
 
     #region Constructors
 
-    public Item (string name,  List<ItemRequirements> requirements) {
+    public Item (string name, List<ItemRequirements> requirements) {
         this.name = name;
         this.requirements = requirements;
     }
@@ -29,6 +29,17 @@ public class Item {
     #region Unity
 
     #endregion
+
+    public Dictionary<string, int> GetItemRequirements (string item) {
+        var req = new Dictionary<string, int> ();
+        for (var i = 0; i < requirements.Count; i++) {
+            if (item != requirements[i].item) {
+                req.Add (requirements[i].item, requirements[i].amount);
+            }
+        }
+
+        return req;
+    }
 
     #endregion
 }

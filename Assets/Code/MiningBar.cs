@@ -17,7 +17,7 @@ public class MiningBar : MonoBehaviour {
     [SerializeField]
     TextMeshProUGUI maxTapsText;
 
-    int currentTaps;
+    int currentTaps = 1;
     int maxTaps;
 
     #endregion
@@ -48,14 +48,12 @@ public class MiningBar : MonoBehaviour {
 
     public void Increase () {
         if (currentTaps < maxTaps) {
-            currentTaps++;
             slider.value = currentTaps;
             currentTapsText.text = currentTaps.ToString ();
+            currentTaps++;
         }
         else {
-            currentTaps = 0;
-            slider.value = currentTaps;
-            currentTapsText.text = currentTaps.ToString ();
+            currentTaps = 1;
             gameObject.SetActive (false);
 
             if (OnMaxTaps != null) {

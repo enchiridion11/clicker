@@ -8,6 +8,8 @@ public class InventorySlot : MonoBehaviour {
     [SerializeField]
     bool isEmpty = true;
 
+    InventoryItemPresenter item;
+
     #endregion
 
     #region Properties
