@@ -31,7 +31,11 @@ MonoBehaviour:
     - item: Stone
       amount: 5
   - name: Pickaxe
-    requirements: []
+    requirements:
+    - item: Log
+      amount: 5
+    - item: Iron Ore
+      amount: 5
   - name: Quarry
     requirements:
     - item: Log

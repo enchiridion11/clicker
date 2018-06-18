@@ -3123,7 +3123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0352ae253307543ab49b0269ebfb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: stone
+  resource: Stone
   bar: {fileID: 207681563}
   requiredTaps: 5
   particles: {fileID: 626967274}
@@ -11071,7 +11071,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0352ae253307543ab49b0269ebfb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: coal
+  resource: Coal
   bar: {fileID: 628490789}
   requiredTaps: 5
   particles: {fileID: 1277025020}
@@ -17682,7 +17682,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0352ae253307543ab49b0269ebfb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: log
+  resource: Log
   bar: {fileID: 649293662}
   requiredTaps: 10
   particles: {fileID: 1649365633}
@@ -23023,7 +23023,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0352ae253307543ab49b0269ebfb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: copper
+  resource: Copper
   bar: {fileID: 1532394172}
   requiredTaps: 10
   particles: {fileID: 1749336173}
@@ -27826,7 +27826,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0352ae253307543ab49b0269ebfb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: iron
+  resource: Iron Ore
   bar: {fileID: 2059415156}
   requiredTaps: 15
   particles: {fileID: 1756077462}
