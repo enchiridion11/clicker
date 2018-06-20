@@ -40,20 +40,26 @@ public class MiningResource : MonoBehaviour {
 
     #region Unity
 
-    void OnEnable () {
-        bar.OnMaxTaps += OnMaxTaps;
+    void OnDisable () {
+        UnsubscribeFromEvents ();
     }
 
-    void Start () {
+    #endregion
+
+    public void Initialize () {
+        SubscribeToEvents ();
+
         particleMat = GetComponent<ParticleSystemRenderer> ().material;
         particleMat.mainTexture = particleImage;
     }
 
-    void OnDisable () {
-        bar.OnMaxTaps -= OnMaxTaps;
+    void SubscribeToEvents () {
+        bar.OnMaxTaps += OnMaxTaps;
     }
 
-    #endregion
+    void UnsubscribeFromEvents () {
+        bar.OnMaxTaps -= OnMaxTaps;
+    }
 
     public void OnTap () {
         bar.gameObject.SetActive (true);

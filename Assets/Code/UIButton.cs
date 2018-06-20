@@ -6,14 +6,7 @@ using UnityEngine.EventSystems;
 public class UIButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler {
     #region Fields
 
-    [SerializeField]
     Animator animator;
-
-    [SerializeField]
-    string buttonDownAnim;
-
-    [SerializeField]
-    string buttonUpAnim;
 
     bool isPressed;
 
@@ -25,21 +18,34 @@ public class UIButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     #region Methods
 
+    void OnEnable () {
+        animator = GetComponent<Animator> ();
+    }
+
     #region Unity
 
     public void OnPointerDown (PointerEventData eventData) {
+        if (animator != null) {
+            animator.Play ("ui_button_down");
+        }
+
         isPressed = true;
-        animator.Play (buttonDownAnim);
     }
 
     public void OnPointerUp (PointerEventData eventData) {
-        animator.Play (buttonUpAnim);
+        if (animator != null) {
+            animator.Play ("ui_button_up");
+        }
+
         isPressed = false;
     }
 
     public void OnPointerExit (PointerEventData eventData) {
-        if (isPressed) {
-            animator.Play (buttonUpAnim);
+        if (isPressed && animator) {
+            if (animator != null) {
+                animator.Play ("ui_button_up");
+            }
+
             isPressed = false;
         }
     }

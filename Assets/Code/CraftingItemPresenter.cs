@@ -30,20 +30,26 @@ public class CraftingItemPresenter : MonoBehaviour {
 
     #region Unity
 
-    void OnEnable () {
-        InventoryManager.Instance.OnAddMinedResource += OnResourceChange;
-    }
-
     void OnDisable () {
-        InventoryManager.Instance.OnAddMinedResource -= OnResourceChange;
+        UnsubscribeFromEvents ();
     }
 
     #endregion
 
     public void Initialize (string item) {
+        SubscribeToEvents ();
+
         name = item;
         itemImage.sprite = GetItemIcon (item);
         amountText.text = amount.ToString ();
+    }
+
+    void SubscribeToEvents () {
+        InventoryManager.Instance.OnAddMinedResource += OnResourceChange;
+    }
+
+    void UnsubscribeFromEvents () {
+        InventoryManager.Instance.OnAddMinedResource -= OnResourceChange;
     }
 
     public void IncreaseAmount () {

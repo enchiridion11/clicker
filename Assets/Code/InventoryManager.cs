@@ -39,22 +39,28 @@ public class InventoryManager : MonoBehaviour {
 
     #region Unity
 
-    void OnEnable () {
-        Instance = this;
-    }
-
     void OnDisable () {
-        MiningManager.Instance.OnResourceMined -= AddMinedResource;
+        UnsubscribeFromEvents ();
     }
 
     #endregion
 
     public void Initialize () {
-        MiningManager.Instance.OnResourceMined += AddMinedResource;
+        Instance = this;
+
+        SubscribeToEvents ();
 
         for (var i = 0; i < slotsParent.childCount; i++) {
             slots.Add (slotsParent.GetChild (i).GetComponent<InventorySlot> ());
         }
+    }
+
+    void SubscribeToEvents () {
+        MiningManager.Instance.OnResourceMined += AddMinedResource;
+    }
+
+    void UnsubscribeFromEvents () {
+        MiningManager.Instance.OnResourceMined -= AddMinedResource;
     }
 
     void AddMinedResource (string name) {

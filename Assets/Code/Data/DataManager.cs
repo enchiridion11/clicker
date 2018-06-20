@@ -30,7 +30,7 @@ public class DataManager : MonoBehaviour {
 
     #region Unity
 
-    void OnEnable () {
+    void Awake () {
         StartCoroutine (LoadStatsFile ());
     }
 
@@ -55,14 +55,17 @@ public class DataManager : MonoBehaviour {
             // load database
             Data.Items = DataConvert.JSONToItems (data["database"]);
 
-            // start managers
-            miningManager.Initialize ();
-            inventoryManager.Initialize ();
-            craftingManager.Initialize ();
+            InitializeManagers ();
         }
         else {
             Debug.LogError ("Cannot load data!");
         }
+    }
+
+    void InitializeManagers () {
+        miningManager.Initialize ();
+        inventoryManager.Initialize ();
+        craftingManager.Initialize ();
     }
 
     #endregion

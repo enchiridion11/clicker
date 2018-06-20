@@ -38,19 +38,25 @@ public class InventoryItemPresenter : MonoBehaviour {
 
     #region Unity
 
-    void OnEnable () {
-        InventoryManager.Instance.OnAddMinedResource += IncreaseAmount;
-    }
-
     void OnDisable () {
-        InventoryManager.Instance.OnAddMinedResource -= IncreaseAmount;
+        UnsubscribeFromEvents ();
     }
 
     #endregion
 
     public void Initialize (string item) {
+        SubscribeToEvents ();
+
         name = item;
         itemImage.sprite = GetItemIcon (item);
+    }
+
+    void SubscribeToEvents () {
+        InventoryManager.Instance.OnAddMinedResource += IncreaseAmount;
+    }
+
+    void UnsubscribeFromEvents () {
+        InventoryManager.Instance.OnAddMinedResource -= IncreaseAmount;
     }
 
     public void IncreaseAmount (string item) {

@@ -28,7 +28,6 @@ public class MiningManager : MonoBehaviour {
     #region Unity
 
     void OnDisable () {
-        Instance = this;
         Terminate ();
     }
 
@@ -38,6 +37,7 @@ public class MiningManager : MonoBehaviour {
         Instance = this;
         foreach (var mine in resourceMines) {
             mine.OnResourceMined += AddItemToInventory;
+            mine.Initialize ();
         }
     }
 
