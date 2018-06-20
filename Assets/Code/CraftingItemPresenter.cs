@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,9 +22,17 @@ public class CraftingItemPresenter : MonoBehaviour {
 
     int amount;
 
+    bool canCraft;
+
+    Dictionary<string, int> requirements = new Dictionary<string, int> ();
+
     #endregion
 
     #region Properties
+
+    #endregion
+
+    #region Events
 
     #endregion
 
@@ -45,45 +55,74 @@ public class CraftingItemPresenter : MonoBehaviour {
     }
 
     void SubscribeToEvents () {
-        InventoryManager.Instance.OnAddMinedResource += OnResourceChange;
+        InventoryManager.Instance.OnAddMinedResource += CheckRequirements;
     }
 
     void UnsubscribeFromEvents () {
-        InventoryManager.Instance.OnAddMinedResource -= OnResourceChange;
+        InventoryManager.Instance.OnAddMinedResource -= CheckRequirements;
     }
 
-    public void IncreaseAmount () {
-        amount++;
+    public void SetAmount (int value) {
+        amount = value;
         amountText.text = amount.ToString ();
     }
 
-    public void DecreaseAmount () {
-        amount--;
-        amountText.text = amount.ToString ();
-    }
-
-    void OnResourceChange (string resource) {
-        var requirements = Data.GetItemData (name).GetItemRequirements (name);
+    void CheckRequirements (string resource) {
+        requirements = Data.GetItemData (name).GetItemRequirements (name);
         if (requirements.Count > 0) {
+            var index = 0;
+            print ("requirements.Count: " + requirements.Count);
+            // check if requirements exist in inventory and if there are enough
             foreach (var requirement in requirements) {
+                print ("requirement.Key: " + requirement.Key + ", resource: " + resource);
+
                 if (InventoryManager.Instance.HasItem (requirement.Key)) {
                     print ("contains: " + requirement.Key);
                     print ("amount: " + InventoryManager.Instance.GetItemAmount (requirement.Key));
-                    if (InventoryManager.Instance.GetItemAmount (requirement.Key) >= requirement.Value) {
-                        GetComponent<CanvasGroup> ().alpha = 1f;
-                        IncreaseAmount ();
-                    }
-                    else {
-                        GetComponent<CanvasGroup> ().alpha = 0.4f;
+                    if (InventoryManager.Instance.GetItemAmount (requirement.Key) < requirement.Value) {
+                        print ("requirement.Key amount: " + InventoryManager.Instance.GetItemAmount (requirement.Key) + ", requirement.Value:" + requirement.Value);
+                        canCraft = false;
+                        CalculateCraftingAmount (requirements);
+                        return;
                     }
                 }
                 else {
-                    GetComponent<CanvasGroup> ().alpha = 0.4f;
+                    canCraft = false;
+                    CalculateCraftingAmount (requirements);
+                    return;
                 }
+
+                index++;
             }
+
+            print ("requirements met");
+            // requirements met, can now set amount
+            canCraft = true;
+            CalculateCraftingAmount (requirements);
         }
         else {
             GetComponent<CanvasGroup> ().alpha = 1f;
+        }
+    }
+
+    void CalculateCraftingAmount (Dictionary<string, int> requirements) {
+        var amount = 0;
+        foreach (var requirement in requirements) {
+            amount = InventoryManager.Instance.GetItemAmount (requirement.Key) / requirement.Value;
+        }
+
+        GetComponent<CanvasGroup> ().alpha = canCraft ? 1f : 0.4f;
+        SetAmount (amount);
+    }
+
+    public void Craft () {
+        if (canCraft) {
+            InventoryManager.Instance.RemoveRequirements (requirements);
+            InventoryManager.Instance.AddCraftedItem (name);
+            CheckRequirements (name);
+        }
+        else {
+            UIManager.Instance.DisplayDialog ("warning", "requirements not met!", "ok");
         }
     }
 

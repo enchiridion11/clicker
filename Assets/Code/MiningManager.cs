@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class MiningManager : MonoBehaviour {
@@ -8,6 +9,9 @@ public class MiningManager : MonoBehaviour {
 
     [SerializeField]
     MiningResource[] resourceMines;
+    
+    [SerializeField]
+    GameObject titleText;
 
     #endregion
 
@@ -35,6 +39,7 @@ public class MiningManager : MonoBehaviour {
 
     public void Initialize () {
         Instance = this;
+        titleText.SetActive (true);
         foreach (var mine in resourceMines) {
             mine.OnResourceMined += AddItemToInventory;
             mine.Initialize ();

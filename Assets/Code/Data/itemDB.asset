@@ -107,10 +107,10 @@ MonoBehaviour:
   - name: Violin
     requirements:
     - item: Brick
-      amount: 10
+      amount: 1
     - item: Copper Bar
-      amount: 10
+      amount: 1
     - item: Iron Bar
-      amount: 10
+      amount: 1
     - item: Plank
-      amount: 10
+      amount: 1

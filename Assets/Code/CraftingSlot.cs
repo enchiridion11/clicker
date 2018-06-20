@@ -14,6 +14,8 @@ public class CraftingSlot : MonoBehaviour {
     #endregion
 
     #region Properties
+    
+    public CraftingItemPresenter Item { get; private set; }
 
     #endregion
 
@@ -24,11 +26,11 @@ public class CraftingSlot : MonoBehaviour {
     #endregion
 
     public void Initialize () {
-        var item = Instantiate (itemPrefab).GetComponent<CraftingItemPresenter> ();
-        item.Initialize (name);
-        item.transform.SetParent (transform);
-        item.transform.localScale = Vector3.one;
-        item.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
+        Item = Instantiate (itemPrefab).GetComponent<CraftingItemPresenter> ();
+        Item.Initialize (name);
+        Item.transform.SetParent (transform);
+        Item.transform.localScale = Vector3.one;
+        Item.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
     }
 
     #endregion

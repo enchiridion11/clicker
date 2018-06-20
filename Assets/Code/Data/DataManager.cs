@@ -19,6 +19,9 @@ public class DataManager : MonoBehaviour {
 
     [SerializeField]
     CraftingManager craftingManager;
+    
+    [SerializeField]
+    UIManager uiManager;
 
     #endregion
 
@@ -66,6 +69,7 @@ public class DataManager : MonoBehaviour {
         miningManager.Initialize ();
         inventoryManager.Initialize ();
         craftingManager.Initialize ();
+        uiManager.Initialize ();
     }
 
     #endregion

@@ -9,17 +9,24 @@ public class CraftingManager : MonoBehaviour {
     [SerializeField]
     Transform slotParent;
 
+    [SerializeField]
+    GameObject titleText;
+
+    List<CraftingSlot> slots = new List<CraftingSlot> ();
+
     #endregion
 
     #region Properties
 
     public static CraftingManager Instance { get; private set; }
 
+    public List<CraftingSlot> Slots {
+        get { return slots; }
+    }
+
     #endregion
 
     #region Events
-
-    public Action OnInitialize;
 
     #endregion
 
@@ -31,7 +38,9 @@ public class CraftingManager : MonoBehaviour {
 
     public void Initialize () {
         Instance = this;
+        titleText.SetActive (true);
         foreach (var slot in slotParent.GetComponentsInChildren<CraftingSlot> ()) {
+            slots.Add (slot);
             slot.Initialize ();
         }
     }

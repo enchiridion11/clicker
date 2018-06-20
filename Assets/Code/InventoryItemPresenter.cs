@@ -16,21 +16,9 @@ public class InventoryItemPresenter : MonoBehaviour {
     [SerializeField]
     ParticleSystem particles;
 
-    string name;
-
-    int amount = 1;
-
     #endregion
 
     #region Properties
-
-    public string Name {
-        get { return name; }
-    }
-
-    public int Amount {
-        get { return amount; }
-    }
 
     #endregion
 
@@ -44,33 +32,27 @@ public class InventoryItemPresenter : MonoBehaviour {
 
     #endregion
 
-    public void Initialize (string item) {
+    public void Initialize (string item, int amount) {
         SubscribeToEvents ();
 
-        name = item;
+        SetAmount (amount);
         itemImage.sprite = GetItemIcon (item);
     }
 
     void SubscribeToEvents () {
-        InventoryManager.Instance.OnAddMinedResource += IncreaseAmount;
+       // InventoryManager.Instance.OnAddMinedResource += IncreaseAmount;
+       // InventoryManager.Instance.OnAddCraftedItem += IncreaseAmount;
     }
 
     void UnsubscribeFromEvents () {
-        InventoryManager.Instance.OnAddMinedResource -= IncreaseAmount;
+        //InventoryManager.Instance.OnAddMinedResource -= IncreaseAmount;
+       // InventoryManager.Instance.OnAddCraftedItem -= IncreaseAmount;
     }
 
-    public void IncreaseAmount (string item) {
-        if (item == name) {
+    public void SetAmount (int amount) {
             amountText.text = amount.ToString ();
-            amount++;
             particles.Play ();
-        }
-    }
-
-    public void DecreaseAmount () {
-        amount--;
-        amountText.text = amount.ToString ();
-    }
+       }
 
     Sprite GetItemIcon (string item) {
         return Resources.Load<Sprite> (string.Format ("Sprites/Items/item_{0}_01", item));
