@@ -13,6 +13,7 @@ public static class DataConvert {
             var data = json.list[i];
             items.Add (new Item (
                 data.ToStringSafe ("id"),
+                data.ToIntSafe ("clicks"),
                 data.HasField ("requirements") ? JSONToItemRequirements (data["requirements"]) : null
             ));
         }
@@ -26,6 +27,7 @@ public static class DataConvert {
             var data = json.list[i];
             items.Add (new Item (
                 data.ToStringSafe ("id"),
+                data.ToIntSafe ("clicks"),
                 data.HasField ("requirements") ? JSONToItemRequirements (data["requirements"]) : null
             ));
         }

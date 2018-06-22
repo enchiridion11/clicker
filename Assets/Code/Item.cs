@@ -9,6 +9,12 @@ public class Item {
     string id;
 
     [SerializeField]
+    int clicks;
+    
+    [SerializeField]
+    int sellAmount;
+    
+    [SerializeField]
     List<ItemRequirements> requirements;
 
     #endregion
@@ -20,6 +26,16 @@ public class Item {
         set { id = value; }
     }
 
+    public int Clicks {
+        get { return clicks; }
+        set { clicks = value; }
+    }
+    
+    public int SellAmount {
+        get { return sellAmount; }
+        set { sellAmount = value; }
+    }
+
     public List<ItemRequirements> Requirements {
         get { return requirements; }
         set { requirements = value; }
@@ -29,8 +45,9 @@ public class Item {
 
     #region Constructors
 
-    public Item (string id, List<ItemRequirements> requirements) {
+    public Item (string id, int clicks, List<ItemRequirements> requirements) {
         this.id = id;
+        this.clicks = clicks;
         this.requirements = requirements;
     }
 

@@ -6,20 +6,11 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class UIDisplayDialog : MonoBehaviour {
+public class UISellDialog : MonoBehaviour {
     #region Fields
 
     [SerializeField]
-    TextMeshProUGUI titleText;
-
-    [SerializeField]
     TextMeshProUGUI messageText;
-
-    [SerializeField]
-    TextMeshProUGUI buttonText;
-
-    [SerializeField]
-    Button button;
 
     #endregion
 
@@ -29,6 +20,8 @@ public class UIDisplayDialog : MonoBehaviour {
 
     #region Events
 
+    public Action<UISellDialog> OnClose;
+
     #endregion
 
     #region Methods
@@ -37,14 +30,16 @@ public class UIDisplayDialog : MonoBehaviour {
 
     #endregion
 
-    public void Initialize (string title, string message, string buttonTitle, UnityAction callback = null) {
-        titleText.text = title;
-        messageText.text = message;
-        buttonText.text = buttonTitle;
-        button.onClick.AddListener (callback ?? Close);
+    public void Initialize (string itemId) {
+        var sellAmount = Data.GetItemData (itemId).Clicks;
+        messageText.text = string.Format ("Sell {0} for <color=#F92772>{1}</color> gold?", itemId, sellAmount);
     }
 
-    public void Close () {
+    public void Sell () {
+        Close ();
+    }
+
+    void Close () {
         UIManager.Instance.Overlay.SetActive (false);
         Destroy (gameObject);
     }

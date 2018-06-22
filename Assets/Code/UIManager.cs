@@ -19,11 +19,18 @@ public class UIManager : MonoBehaviour {
     [Header ("Dialogs"), SerializeField]
     GameObject displayDialog;
 
+    [SerializeField]
+    GameObject sellDialog;
+
     #endregion
 
     #region Properties
 
     public static UIManager Instance { get; private set; }
+
+    public GameObject Overlay {
+        get { return overlay; }
+    }
 
     #endregion
 
@@ -44,21 +51,24 @@ public class UIManager : MonoBehaviour {
     public void DisplayDialog (string title, string message, string button, UnityAction callback = null) {
         overlay.SetActive (true);
         var dialog = Instantiate (displayDialog).GetComponent<UIDisplayDialog> ();
-        dialog.OnClose += HideOverlay;
         dialog.Initialize (title, message, button, callback);
         dialog.transform.SetParent (dialogs);
         dialog.transform.localScale = Vector3.one;
         dialog.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
     }
 
-    void HideOverlay (UIDisplayDialog dialog) {
-        overlay.SetActive (false);
-        dialog.OnClose -= HideOverlay;
+    public void SellDialog (string itemId) {
+        overlay.SetActive (true);
+        var dialog = Instantiate (sellDialog).GetComponent<UISellDialog> ();
+        dialog.Initialize (itemId);
+        dialog.transform.SetParent (dialogs);
+        dialog.transform.localScale = Vector3.one;
+        dialog.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
     }
-    
+
     public Sprite GetItemIcon (string itemId) {
         return Resources.Load<Sprite> (string.Format ("Sprites/Items/item_{0}_01", itemId));
     }
-   
+
     #endregion
 }

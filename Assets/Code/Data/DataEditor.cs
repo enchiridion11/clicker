@@ -46,7 +46,8 @@ public class DataEditor : EditorWindow {
     SerializedProperty itemDbList;
 
     // item class
-    SerializedProperty itemName;
+    SerializedProperty id;
+    SerializedProperty clicks;
     SerializedProperty requirementsArray;
     SerializedProperty requirementName;
     SerializedProperty requirementAmount;
@@ -167,7 +168,7 @@ public class DataEditor : EditorWindow {
 
             hasLooped = false;
 
-            itemDb.Add (new Item ("", null));
+            itemDb.Add (new Item ("", 0, null));
 
             RefreshDatabase ();
             state = State.ADD;
@@ -224,9 +225,9 @@ public class DataEditor : EditorWindow {
         // only run this once
         if (!hasLooped) {
             //clear fields
-            if (itemName != null) {
+            if (id != null) {
                 GUI.SetNextControlName ("Name");
-                itemName.ClearArray ();
+                id.ClearArray ();
                 GUI.FocusControl ("Name");
                 requirementsArray.ClearArray ();
                 itemPopUpIndex.Clear ();
@@ -238,10 +239,15 @@ public class DataEditor : EditorWindow {
         scrollPositionMain = EditorGUILayout.BeginScrollView (scrollPositionMain);
 
         var itemsArray = itemDbList.GetArrayElementAtIndex (itemDbList.arraySize - 1);
-        itemName = itemsArray.FindPropertyRelative ("name");
+        id = itemsArray.FindPropertyRelative ("id");
+        clicks = itemsArray.FindPropertyRelative ("clicks");
         requirementsArray = itemsArray.FindPropertyRelative ("requirements");
+        
         EditorGUILayout.LabelField ("Name", EditorStyles.boldLabel);
-        itemName.stringValue = EditorGUILayout.TextField (itemName.stringValue);
+        id.stringValue = EditorGUILayout.TextField (id.stringValue);
+        
+        EditorGUILayout.LabelField ("Clicks", EditorStyles.boldLabel);
+        clicks.intValue = EditorGUILayout.IntField (clicks.intValue);
 
         if (itemDb.Count > 1) {
             GUI.color = colorGreen;
@@ -272,7 +278,7 @@ public class DataEditor : EditorWindow {
         GUI.color = colorDefault;
         if (GUILayout.Button ("Create", GUILayout.Width (100))) {
             // data validation
-            if (itemName.stringValue.IsNullOrEmpty ()) {
+            if (id.stringValue.IsNullOrEmpty ()) {
                 EditorUtility.DisplayDialog ("Error", "Name cannot be empty!", "Ok");
                 return;
             }
@@ -285,13 +291,14 @@ public class DataEditor : EditorWindow {
                 }
             }
 
-            AddItemToPopUpList (itemName.stringValue);
-            itemDb.Item (itemDb.Count - 1).Id = itemName.stringValue;
+            AddItemToPopUpList (id.stringValue);
+            itemDb.Item (itemDb.Count - 1).Id = id.stringValue;
+            itemDb.Item (itemDb.Count - 1).Clicks = clicks.intValue;
             itemDb.Item (itemDb.Count - 1).Requirements = SerializedArrayToList (requirementsArray);
 
             //clear fields
             GUI.SetNextControlName ("Name");
-            itemName.ClearArray ();
+            id.ClearArray ();
             GUI.FocusControl ("Name");
             requirementsArray.ClearArray ();
             itemPopUpIndex.Clear ();
@@ -306,7 +313,7 @@ public class DataEditor : EditorWindow {
         if (GUILayout.Button ("Cancel", GUILayout.Width (100))) {
             //clear fields
             GUI.SetNextControlName ("Name");
-            itemName.ClearArray ();
+            id.ClearArray ();
             GUI.FocusControl ("Name");
             requirementsArray.ClearArray ();
             itemPopUpIndex.Clear ();
@@ -325,8 +332,11 @@ public class DataEditor : EditorWindow {
         if (!hasLooped) {
             var itemsArray = itemDbList.GetArrayElementAtIndex (selectedItem);
 
-            itemName = itemsArray.FindPropertyRelative ("id");
-            itemName.stringValue = itemDb.Item (selectedItem).Id;
+            id = itemsArray.FindPropertyRelative ("id");
+            id.stringValue = itemDb.Item (selectedItem).Id;
+            
+            clicks = itemsArray.FindPropertyRelative ("clicks");
+            clicks.intValue = itemDb.Item (selectedItem).Clicks;
 
             requirementsArray = itemsArray.FindPropertyRelative ("requirements");
             if (requirementsArray.arraySize > 0) {
@@ -349,7 +359,10 @@ public class DataEditor : EditorWindow {
 
         // display selected item current name
         EditorGUILayout.LabelField ("New Name", EditorStyles.boldLabel);
-        itemName.stringValue = EditorGUILayout.TextField (itemName.stringValue);
+        id.stringValue = EditorGUILayout.TextField (id.stringValue);
+        
+        EditorGUILayout.LabelField ("Clicks", EditorStyles.boldLabel);
+        clicks.intValue = EditorGUILayout.IntField (clicks.intValue);
 
         if (itemDb.Count > 0) {
             GUI.color = colorGreen;
@@ -386,7 +399,7 @@ public class DataEditor : EditorWindow {
         GUI.color = colorDefault;
         if (GUILayout.Button ("Update", GUILayout.Width (100))) {
             // data validation
-            if (itemName.stringValue.IsNullOrEmpty ()) {
+            if (id.stringValue.IsNullOrEmpty ()) {
                 EditorUtility.DisplayDialog ("Error", "Name cannot be empty!", "Ok");
                 return;
             }
@@ -405,18 +418,19 @@ public class DataEditor : EditorWindow {
             }
 
             oldItemName = itemDb.Item (selectedItem).Id;
-            itemDb.Item (selectedItem).Id = itemName.stringValue;
+            itemDb.Item (selectedItem).Id = id.stringValue;
+            itemDb.Item (selectedItem).Clicks = clicks.intValue;
             itemDb.Item (selectedItem).Requirements = SerializedArrayToList (requirementsArray);
 
-            if (oldItemName != itemName.stringValue) {
-                UpdateItemPopUpList (itemName.stringValue, StringToIndex (oldItemName));
+            if (oldItemName != id.stringValue) {
+                UpdateItemPopUpList (id.stringValue, StringToIndex (oldItemName));
             }
 
             RefreshDatabase ();
 
             //clear fields
             GUI.SetNextControlName ("Name");
-            itemName.ClearArray ();
+            id.ClearArray ();
             GUI.FocusControl ("Name");
             itemPopUpIndex.Clear ();
 
@@ -442,7 +456,7 @@ public class DataEditor : EditorWindow {
 
             //clear fields
             GUI.SetNextControlName ("Name");
-            itemName.ClearArray ();
+            id.ClearArray ();
             GUI.FocusControl ("Name");
             requirementsArray.ClearArray ();
             itemPopUpIndex.Clear ();

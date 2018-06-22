@@ -16,6 +16,8 @@ public class InventoryItemPresenter : MonoBehaviour {
     [SerializeField]
     ParticleSystem particles;
 
+    string id;
+
     #endregion
 
     #region Properties
@@ -36,7 +38,8 @@ public class InventoryItemPresenter : MonoBehaviour {
         SubscribeToEvents ();
 
         SetAmount (amount);
-        itemImage.sprite = UIManager.Instance.GetItemIcon (itemId);
+        id = itemId;
+        itemImage.sprite = UIManager.Instance.GetItemIcon (id);
     }
 
     void SubscribeToEvents () {
@@ -48,6 +51,10 @@ public class InventoryItemPresenter : MonoBehaviour {
     public void SetAmount (int amount) {
         amountText.text = amount.ToString ();
         particles.Play ();
+    }
+
+    public void Sell () {
+        UIManager.Instance.SellDialog (id);
     }
 
     #endregion

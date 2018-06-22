@@ -13,8 +13,8 @@ public class MiningResource : MonoBehaviour {
     [SerializeField]
     MiningBar bar;
 
-    [SerializeField]
-    int requiredTaps;
+    int currentClicks = 1;
+    int requiredClicks;
 
     [SerializeField]
     ParticleSystem particles;
@@ -51,26 +51,30 @@ public class MiningResource : MonoBehaviour {
 
         particleMat = GetComponent<ParticleSystemRenderer> ().material;
         particleMat.mainTexture = particleImage;
+
+        requiredClicks = Data.GetItemData (itemId).Clicks;
     }
 
     void SubscribeToEvents () {
-        bar.OnMaxTaps += OnMaxTaps;
     }
 
     void UnsubscribeFromEvents () {
-        bar.OnMaxTaps -= OnMaxTaps;
     }
 
-    public void OnTap () {
-        bar.gameObject.SetActive (true);
-        bar.Initialize (requiredTaps);
-        bar.Increase ();
-        particles.Play ();
-    }
+    public void Mine () {
+        if (currentClicks < requiredClicks) {
+            bar.gameObject.SetActive (true);
+            bar.Initialize (currentClicks, requiredClicks);
+            particles.Play ();
+            currentClicks++;
+        }
+        else {
+            currentClicks = 1;
+            bar.gameObject.SetActive (false);
 
-    void OnMaxTaps () {
-        if (OnResourceMined != null) {
-            OnResourceMined (itemId);
+            if (OnResourceMined != null) {
+                OnResourceMined (itemId);
+            }
         }
     }
 
