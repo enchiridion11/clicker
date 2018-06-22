@@ -8,11 +8,11 @@ public class MiningManager : MonoBehaviour {
     #region Fields
 
     [SerializeField]
-    MiningResource[] resourceMines;
+    GameObject titleText;
     
     [SerializeField]
-    GameObject titleText;
-
+    MiningResource[] resourceMines;
+    
     #endregion
 
     #region Properties

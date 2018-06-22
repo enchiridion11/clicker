@@ -18,7 +18,7 @@ public class CraftingItemPresenter : MonoBehaviour {
     [SerializeField]
     CanvasGroup canvasGroup;
 
-    string name;
+    string id;
 
     int amount;
 
@@ -46,11 +46,11 @@ public class CraftingItemPresenter : MonoBehaviour {
 
     #endregion
 
-    public void Initialize (string item) {
+    public void Initialize (string itemId) {
         SubscribeToEvents ();
 
-        name = item;
-        itemImage.sprite = GetItemIcon (item);
+        id = itemId;
+        itemImage.sprite = UIManager.Instance.GetItemIcon (itemId);
         amountText.text = amount.ToString ();
     }
 
@@ -68,7 +68,7 @@ public class CraftingItemPresenter : MonoBehaviour {
     }
 
     void CheckRequirements (string resource) {
-        requirements = Data.GetItemData (name).GetItemRequirements (name);
+        requirements = Data.GetItemData (id).GetItemRequirements (id);
         if (requirements.Count > 0) {
             var index = 0;
             print ("requirements.Count: " + requirements.Count);
@@ -118,16 +118,12 @@ public class CraftingItemPresenter : MonoBehaviour {
     public void Craft () {
         if (canCraft) {
             InventoryManager.Instance.RemoveRequirements (requirements);
-            InventoryManager.Instance.AddCraftedItem (name);
-            CheckRequirements (name);
+            InventoryManager.Instance.AddCraftedItem (id);
+            CheckRequirements (id);
         }
         else {
             UIManager.Instance.DisplayDialog ("warning", "requirements not met!", "ok");
         }
-    }
-
-    Sprite GetItemIcon (string item) {
-        return Resources.Load<Sprite> (string.Format ("Sprites/Items/item_{0}_01", item));
     }
 
     #endregion

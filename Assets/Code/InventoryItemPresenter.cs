@@ -32,30 +32,22 @@ public class InventoryItemPresenter : MonoBehaviour {
 
     #endregion
 
-    public void Initialize (string item, int amount) {
+    public void Initialize (string itemId, int amount) {
         SubscribeToEvents ();
 
         SetAmount (amount);
-        itemImage.sprite = GetItemIcon (item);
+        itemImage.sprite = UIManager.Instance.GetItemIcon (itemId);
     }
 
     void SubscribeToEvents () {
-       // InventoryManager.Instance.OnAddMinedResource += IncreaseAmount;
-       // InventoryManager.Instance.OnAddCraftedItem += IncreaseAmount;
     }
 
     void UnsubscribeFromEvents () {
-        //InventoryManager.Instance.OnAddMinedResource -= IncreaseAmount;
-       // InventoryManager.Instance.OnAddCraftedItem -= IncreaseAmount;
     }
 
     public void SetAmount (int amount) {
-            amountText.text = amount.ToString ();
-            particles.Play ();
-       }
-
-    Sprite GetItemIcon (string item) {
-        return Resources.Load<Sprite> (string.Format ("Sprites/Items/item_{0}_01", item));
+        amountText.text = amount.ToString ();
+        particles.Play ();
     }
 
     #endregion

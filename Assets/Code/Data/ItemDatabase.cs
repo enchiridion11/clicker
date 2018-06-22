@@ -41,7 +41,7 @@ public class ItemDatabase : ScriptableObject {
     }
 
     public void SortAlphabeticallyAtoZ () {
-        database.Sort ((x, y) => string.Compare (x.name, y.name));
+        database.Sort ((x, y) => string.Compare (x.Id, y.Id));
     }
 
     #endregion

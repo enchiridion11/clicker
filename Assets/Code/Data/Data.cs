@@ -16,7 +16,7 @@ public static class Data {
     public static Item GetItemData (string id) {
         Item data = null;
         foreach (var item in Items) {
-            if (item.name == id) {
+            if (item.Id == id) {
                 data = item;
             }
         }

@@ -8,7 +8,7 @@ public class MiningResource : MonoBehaviour {
     #region Fields
 
     [SerializeField]
-    string resource;
+    string itemId;
 
     [SerializeField]
     MiningBar bar;
@@ -70,7 +70,7 @@ public class MiningResource : MonoBehaviour {
 
     void OnMaxTaps () {
         if (OnResourceMined != null) {
-            OnResourceMined (resource);
+            OnResourceMined (itemId);
         }
     }
 

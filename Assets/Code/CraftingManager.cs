@@ -7,10 +7,10 @@ public class CraftingManager : MonoBehaviour {
     #region Fields
 
     [SerializeField]
-    Transform slotParent;
+    GameObject titleText;
 
     [SerializeField]
-    GameObject titleText;
+    Transform slotParent;
 
     List<CraftingSlot> slots = new List<CraftingSlot> ();
 

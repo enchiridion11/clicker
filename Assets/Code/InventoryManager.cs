@@ -6,18 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class InventoryManager : MonoBehaviour {
     #region Fields
-
+  
     [SerializeField]
-    int inventorySize;
+    GameObject titleText;
 
     [SerializeField]
     GameObject itemPrefab;
 
     [SerializeField]
     Transform slotsParent;
-
-    [SerializeField]
-    GameObject titleText;
 
     List<InventorySlot> slots = new List<InventorySlot> ();
 

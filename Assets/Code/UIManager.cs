@@ -13,7 +13,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     Transform dialogs;
 
-    [SerializeField]
+    [Header ("Other"), SerializeField]
     GameObject overlay;
 
     [Header ("Dialogs"), SerializeField]
@@ -55,6 +55,10 @@ public class UIManager : MonoBehaviour {
         overlay.SetActive (false);
         dialog.OnClose -= HideOverlay;
     }
-
+    
+    public Sprite GetItemIcon (string itemId) {
+        return Resources.Load<Sprite> (string.Format ("Sprites/Items/item_{0}_01", itemId));
+    }
+   
     #endregion
 }

@@ -2574,7 +2574,7 @@ RectTransform:
   m_GameObject: {fileID: 542870934}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0000306, y: 1.0000306, z: 1.0000306}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1632829166}
   m_Father: {fileID: 1153015738}
@@ -2658,7 +2658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be237b9a4ed4c5446850b0c51bee6a57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Brick
+  itemId: brick
   itemPrefab: {fileID: 1241097057792476, guid: 710341510e02eeb47a3bd68f24977cac, type: 2}
 --- !u!222 &547481544
 CanvasRenderer:
@@ -3146,7 +3146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0352ae253307543ab49b0269ebfb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: Stone
+  itemId: stone
   bar: {fileID: 207681563}
   requiredTaps: 3
   particles: {fileID: 626967274}
@@ -9121,7 +9121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be237b9a4ed4c5446850b0c51bee6a57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Stone Furnace
+  itemId: stone_furnace
   itemPrefab: {fileID: 1241097057792476, guid: 710341510e02eeb47a3bd68f24977cac, type: 2}
 --- !u!222 &837061114
 CanvasRenderer:
@@ -9264,7 +9264,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be237b9a4ed4c5446850b0c51bee6a57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Plank
+  itemId: plank
   itemPrefab: {fileID: 1241097057792476, guid: 710341510e02eeb47a3bd68f24977cac, type: 2}
 --- !u!222 &859391400
 CanvasRenderer:
@@ -9621,7 +9621,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be237b9a4ed4c5446850b0c51bee6a57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Violin
+  itemId: violin
   itemPrefab: {fileID: 1241097057792476, guid: 710341510e02eeb47a3bd68f24977cac, type: 2}
 --- !u!222 &972351101
 CanvasRenderer:
@@ -11127,7 +11127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0352ae253307543ab49b0269ebfb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: Coal
+  itemId: coal
   bar: {fileID: 628490789}
   requiredTaps: 3
   particles: {fileID: 1277025020}
@@ -17163,7 +17163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be237b9a4ed4c5446850b0c51bee6a57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Copper Bar
+  itemId: copper_bar
   itemPrefab: {fileID: 1241097057792476, guid: 710341510e02eeb47a3bd68f24977cac, type: 2}
 --- !u!222 &1554560493
 CanvasRenderer:
@@ -17801,7 +17801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0352ae253307543ab49b0269ebfb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: Log
+  itemId: log
   bar: {fileID: 649293662}
   requiredTaps: 3
   particles: {fileID: 1649365633}
@@ -23134,7 +23134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0352ae253307543ab49b0269ebfb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: Copper
+  itemId: copper
   bar: {fileID: 1532394172}
   requiredTaps: 3
   particles: {fileID: 1749336173}
@@ -27937,7 +27937,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0352ae253307543ab49b0269ebfb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: Iron Ore
+  itemId: iron_ore
   bar: {fileID: 2059415156}
   requiredTaps: 3
   particles: {fileID: 1756077462}
@@ -32780,7 +32780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be237b9a4ed4c5446850b0c51bee6a57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Pickaxe
+  itemId: pickaxe
   itemPrefab: {fileID: 1241097057792476, guid: 710341510e02eeb47a3bd68f24977cac, type: 2}
 --- !u!222 &1823350809
 CanvasRenderer:
@@ -34573,7 +34573,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be237b9a4ed4c5446850b0c51bee6a57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Iron Bar
+  itemId: iron_bar
   itemPrefab: {fileID: 1241097057792476, guid: 710341510e02eeb47a3bd68f24977cac, type: 2}
 --- !u!222 &2072377500
 CanvasRenderer:

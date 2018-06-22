@@ -12,17 +12,30 @@ public static class DataConvert {
         for (var i = 0; i < json.list.Count; i++) {
             var data = json.list[i];
             items.Add (new Item (
-                data.ToStringSafe ("name"),
+                data.ToStringSafe ("id"),
                 data.HasField ("requirements") ? JSONToItemRequirements (data["requirements"]) : null
             ));
         }
 
         return items.ToArray ();
     }
+    
+    public static List<Item> JSONToItemDatabase (JSONObject json) {
+        var items = new List<Item> ();
+        for (var i = 0; i < json.list.Count; i++) {
+            var data = json.list[i];
+            items.Add (new Item (
+                data.ToStringSafe ("id"),
+                data.HasField ("requirements") ? JSONToItemRequirements (data["requirements"]) : null
+            ));
+        }
+
+        return items;
+    }
 
     public static ItemRequirements JSONToItemRequirement (JSONObject json) {
         return new ItemRequirements (
-            json.ToStringSafe ("item"),
+            json.ToStringSafe ("id"),
             json.ToIntSafe ("amount"));
     }
 

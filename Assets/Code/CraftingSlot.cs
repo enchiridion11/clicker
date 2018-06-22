@@ -6,7 +6,7 @@ public class CraftingSlot : MonoBehaviour {
     #region Fields
 
     [SerializeField]
-    string name;
+    string itemId;
 
     [SerializeField]
     GameObject itemPrefab;
@@ -27,7 +27,7 @@ public class CraftingSlot : MonoBehaviour {
 
     public void Initialize () {
         Item = Instantiate (itemPrefab).GetComponent<CraftingItemPresenter> ();
-        Item.Initialize (name);
+        Item.Initialize (itemId);
         Item.transform.SetParent (transform);
         Item.transform.localScale = Vector3.one;
         Item.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;

@@ -66,11 +66,11 @@ public class DataManager : MonoBehaviour {
     }
 
     void InitializeManagers () {
+        uiManager.Initialize ();
         miningManager.Initialize ();
         inventoryManager.Initialize ();
         craftingManager.Initialize ();
-        uiManager.Initialize ();
-    }
+        }
 
     #endregion
 }

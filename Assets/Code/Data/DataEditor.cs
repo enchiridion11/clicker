@@ -10,8 +10,6 @@ using WebSocketSharp;
 public class DataEditor : EditorWindow {
     #region Fields
 
-    public DataArrays DataArrays;
-
     const string JsonPath = "/StreamingAssets/data.json";
     const string AssetPath = "Assets/Code/Data/itemDB.asset";
 
@@ -93,7 +91,7 @@ public class DataEditor : EditorWindow {
         itemDbList = itemDbObject.FindProperty ("database");
 
         for (var i = 0; i < itemDb.Count; i++) {
-            AddItemToPopUpList (itemDb.Item (i).name);
+            AddItemToPopUpList (itemDb.Item (i).Id);
         }
     }
 
@@ -119,7 +117,7 @@ public class DataEditor : EditorWindow {
                 }
 
                 // make sure item is not being used as requirement in another item before deleting
-                var itemUsage = GetItemUsage (itemDb.Item (i).name);
+                var itemUsage = GetItemUsage (itemDb.Item (i).Id);
 
                 if (itemUsage.Count > 0) {
                     var list = "\n";
@@ -127,7 +125,7 @@ public class DataEditor : EditorWindow {
                         list += "\n" + t;
                     }
 
-                    EditorUtility.DisplayDialog ("Warning", "Cannot delete " + itemDb.Item (i).name + ", it is being used in:" + list, "Ok");
+                    EditorUtility.DisplayDialog ("Warning", "Cannot delete " + itemDb.Item (i).Id + ", it is being used in:" + list, "Ok");
                     return;
                 }
 
@@ -144,7 +142,7 @@ public class DataEditor : EditorWindow {
 
             // ITEM IN LIST
             GUI.color = colorDefault;
-            if (GUILayout.Button (itemDb.Item (i).name, "box", GUILayout.ExpandWidth (true))) {
+            if (GUILayout.Button (itemDb.Item (i).Id, "box", GUILayout.ExpandWidth (true))) {
                 hasLooped = false;
 
                 itemPopUpIndex.Clear ();
@@ -157,7 +155,8 @@ public class DataEditor : EditorWindow {
         }
 
         EditorGUILayout.EndScrollView ();
-        EditorGUILayout.BeginHorizontal (GUILayout.ExpandWidth (true));
+        
+        EditorGUILayout.BeginVertical (GUILayout.ExpandWidth (true));
         EditorGUILayout.LabelField ("Items: " + itemDb.Count, GUILayout.Width (75));
 
         GUI.color = colorGreen;
@@ -173,13 +172,21 @@ public class DataEditor : EditorWindow {
             RefreshDatabase ();
             state = State.ADD;
         }
+        
+        EditorGUILayout.BeginHorizontal (GUILayout.ExpandWidth (true));
 
         GUI.color = colorDefault;
         if (GUILayout.Button ("Save JSON")) {
             SaveGameData ();
         }
+        
+        GUI.color = colorDefault;
+        if (GUILayout.Button ("Load JSON")) {
+            LoadGameData ();
+        }
 
         EditorGUILayout.EndHorizontal ();
+        EditorGUILayout.EndVertical ();
         EditorGUILayout.Space ();
         EditorGUILayout.EndVertical ();
     }
@@ -279,8 +286,8 @@ public class DataEditor : EditorWindow {
             }
 
             AddItemToPopUpList (itemName.stringValue);
-            itemDb.Item (itemDb.Count - 1).name = itemName.stringValue;
-            itemDb.Item (itemDb.Count - 1).requirements = SerializedArrayToList (requirementsArray);
+            itemDb.Item (itemDb.Count - 1).Id = itemName.stringValue;
+            itemDb.Item (itemDb.Count - 1).Requirements = SerializedArrayToList (requirementsArray);
 
             //clear fields
             GUI.SetNextControlName ("Name");
@@ -318,8 +325,8 @@ public class DataEditor : EditorWindow {
         if (!hasLooped) {
             var itemsArray = itemDbList.GetArrayElementAtIndex (selectedItem);
 
-            itemName = itemsArray.FindPropertyRelative ("name");
-            itemName.stringValue = itemDb.Item (selectedItem).name;
+            itemName = itemsArray.FindPropertyRelative ("id");
+            itemName.stringValue = itemDb.Item (selectedItem).Id;
 
             requirementsArray = itemsArray.FindPropertyRelative ("requirements");
             if (requirementsArray.arraySize > 0) {
@@ -331,7 +338,7 @@ public class DataEditor : EditorWindow {
                     itemPopUpIndex.Add (i);
                     GUI.color = colorDefault;
                     itemPopUpIndex[i] = EditorGUILayout.Popup ("Item:", StringToIndex (requirementName.stringValue), GetItemPopUpList ());
-                    requirementAmount.intValue = itemDb.Item (selectedItem).requirements[i].amount;
+                    requirementAmount.intValue = itemDb.Item (selectedItem).Requirements[i].amount;
                 }
             }
 
@@ -347,7 +354,7 @@ public class DataEditor : EditorWindow {
         if (itemDb.Count > 0) {
             GUI.color = colorGreen;
             if (GUILayout.Button ("Add Requirement")) {
-                itemDb.Item (selectedItem).requirements.Add (new ItemRequirements ("", 0));
+                itemDb.Item (selectedItem).Requirements.Add (new ItemRequirements ("", 0));
                 requirementsArray.InsertArrayElementAtIndex (requirementsArray.arraySize);
                 itemPopUpIndex.Add (itemPopUpIndex.Count);
             }
@@ -367,7 +374,7 @@ public class DataEditor : EditorWindow {
                 GUI.color = colorRed;
                 if (GUILayout.Button ("Remove Requirement")) {
                     if (EditorUtility.DisplayDialog ("Warning", "Are you sure you want to remove this requirement? This cannot be undone!", "Ok")) {
-                        itemDb.Item (selectedItem).requirements.RemoveAt (i);
+                        itemDb.Item (selectedItem).Requirements.RemoveAt (i);
                         requirementsArray.DeleteArrayElementAtIndex (i);
                     }
                 }
@@ -384,9 +391,9 @@ public class DataEditor : EditorWindow {
                 return;
             }
 
-            for (var i = 0; i < itemDb.Item (selectedItem).requirements.Count; i++) {
+            for (var i = 0; i < itemDb.Item (selectedItem).Requirements.Count; i++) {
                 // data validation
-                if (requirementName.stringValue == itemDb.Item (selectedItem).name) {
+                if (requirementName.stringValue == itemDb.Item (selectedItem).Id) {
                     EditorUtility.DisplayDialog ("Error", "Item cannot require itself!", "Ok");
                     return;
                 }
@@ -397,9 +404,9 @@ public class DataEditor : EditorWindow {
                 }
             }
 
-            oldItemName = itemDb.Item (selectedItem).name;
-            itemDb.Item (selectedItem).name = itemName.stringValue;
-            itemDb.Item (selectedItem).requirements = SerializedArrayToList (requirementsArray);
+            oldItemName = itemDb.Item (selectedItem).Id;
+            itemDb.Item (selectedItem).Id = itemName.stringValue;
+            itemDb.Item (selectedItem).Requirements = SerializedArrayToList (requirementsArray);
 
             if (oldItemName != itemName.stringValue) {
                 UpdateItemPopUpList (itemName.stringValue, StringToIndex (oldItemName));
@@ -420,9 +427,9 @@ public class DataEditor : EditorWindow {
 
         GUI.color = colorDefault;
         if (GUILayout.Button ("Cancel", GUILayout.Width (100))) {
-            for (var i = 0; i < itemDb.Item (selectedItem).requirements.Count; i++) {
+            for (var i = 0; i < itemDb.Item (selectedItem).Requirements.Count; i++) {
                 // data validation
-                if (requirementName.stringValue == itemDb.Item (selectedItem).name) {
+                if (requirementName.stringValue == itemDb.Item (selectedItem).Id) {
                     EditorUtility.DisplayDialog ("Error", "Item cannot require itself!", "Ok");
                     return;
                 }
@@ -456,9 +463,9 @@ public class DataEditor : EditorWindow {
     List<string> GetItemUsage (string item) {
         var itemsInUse = new List<string> ();
         for (var i = 0; i < itemDb.Count; i++) {
-            foreach (var t in itemDb.Item (i).requirements) {
+            foreach (var t in itemDb.Item (i).Requirements) {
                 if (item == t.item) {
-                    itemsInUse.Add (itemDb.Item (i).name);
+                    itemsInUse.Add (itemDb.Item (i).Id);
                 }
             }
         }
@@ -477,10 +484,10 @@ public class DataEditor : EditorWindow {
     void UpdateItemPopUpList (string updatedItemName, int index) {
         var currentItemName = itemPopUp[index];
         for (var i = 0; i < itemDb.Count; i++) {
-            if (itemDb.Item (i).requirements.Count > 0) {
-                for (var j = 0; j < itemDb.Item (i).requirements.Count; j++) {
-                    if (itemDb.Item (i).requirements[j].item == currentItemName) {
-                        itemDb.Item (i).requirements[j].item = updatedItemName;
+            if (itemDb.Item (i).Requirements.Count > 0) {
+                for (var j = 0; j < itemDb.Item (i).Requirements.Count; j++) {
+                    if (itemDb.Item (i).Requirements[j].item == currentItemName) {
+                        itemDb.Item (i).Requirements[j].item = updatedItemName;
                     }
                 }
             }
@@ -527,12 +534,11 @@ public class DataEditor : EditorWindow {
 
         if (File.Exists (dataFilePath)) {
             var dataAsJson = File.ReadAllText (dataFilePath);
-            DataArrays = JsonUtility.FromJson<DataArrays> (dataAsJson);
+            itemDb.database = DataConvert.JSONToItemDatabase (new JSONObject(dataAsJson)["database"]);
             EditorUtility.DisplayDialog ("Great Success", "Loaded existing data!", "Ok");
         }
         else {
-            DataArrays = new DataArrays ();
-            EditorUtility.DisplayDialog ("Great Success", "Created new data!", "Ok");
+            EditorUtility.DisplayDialog ("Error", "No json found!", "Ok");
         }
     }
 
