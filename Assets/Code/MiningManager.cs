@@ -52,9 +52,9 @@ public class MiningManager : MonoBehaviour {
         }
     }
 
-    void AddItemToInventory (string resource) {
+    void AddItemToInventory (string itemId) {
         if (OnResourceMined != null) {
-            OnResourceMined (resource);
+            OnResourceMined (itemId);
         }
     }
 

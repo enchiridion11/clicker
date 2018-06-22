@@ -111,7 +111,7 @@ public class CraftingItemPresenter : MonoBehaviour {
             amount = InventoryManager.Instance.GetItemAmount (requirement.Key) / requirement.Value;
         }
 
-        GetComponent<CanvasGroup> ().alpha = canCraft ? 1f : 0.4f;
+        canvasGroup.alpha = canCraft ? 1f : 0.4f;
         SetAmount (amount);
     }
 

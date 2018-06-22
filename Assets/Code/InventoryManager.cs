@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class InventoryManager : MonoBehaviour {
     #region Fields
-  
+
     [SerializeField]
     GameObject titleText;
 
@@ -67,19 +67,19 @@ public class InventoryManager : MonoBehaviour {
         MiningManager.Instance.OnResourceMined -= AddMinedResource;
     }
 
-    void AddMinedResource (string name) {
-        if (!HasItem (name)) {
+    void AddMinedResource (string itemId) {
+        if (!HasItem (itemId)) {
             for (var i = 0; i < slots.Count; i++) {
                 if (slots[i].IsEmpty) {
                     var item = Instantiate (itemPrefab).GetComponent<InventoryItemPresenter> ();
-                    item.Initialize (name, 0);
+                    item.Initialize (itemId, 0);
                     item.transform.SetParent (slots[i].transform);
                     item.transform.localScale = Vector3.one;
                     item.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
 
                     // add item to list
                     slots[i].ItemPresenter = item;
-                    slots[i].Item = name;
+                    slots[i].ItemId = itemId;
                     slots[i].Amount = 0;
                     slots[i].IsEmpty = false;
                     break;
@@ -88,23 +88,23 @@ public class InventoryManager : MonoBehaviour {
         }
 
         if (OnAddMinedResource != null) {
-            OnAddMinedResource (name);
+            OnAddMinedResource (itemId);
         }
     }
 
-    public void AddCraftedItem (string name) {
-        if (!HasItem (name)) {
+    public void AddCraftedItem (string itemId) {
+        if (!HasItem (itemId)) {
             for (var i = 0; i < slots.Count; i++) {
                 if (slots[i].IsEmpty) {
                     var item = Instantiate (itemPrefab).GetComponent<InventoryItemPresenter> ();
-                    item.Initialize (name, 0);
+                    item.Initialize (itemId, 0);
                     item.transform.SetParent (slots[i].transform);
                     item.transform.localScale = Vector3.one;
                     item.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
 
                     // add item to list
                     slots[i].ItemPresenter = item;
-                    slots[i].Item = name;
+                    slots[i].ItemId = itemId;
                     slots[i].Amount = 0;
                     slots[i].IsEmpty = false;
                     break;
@@ -113,11 +113,11 @@ public class InventoryManager : MonoBehaviour {
         }
 
         if (OnAddMinedResource != null) {
-            OnAddMinedResource (name);
+            OnAddMinedResource (itemId);
         }
-        
-                
-        if (name == "Violin") {
+
+        // temp victory condition
+        if (itemId == "Violin") {
             ShowVictoryScreen ();
         }
     }
@@ -134,10 +134,10 @@ public class InventoryManager : MonoBehaviour {
         }
     }
 
-    public bool HasItem (string name) {
+    public bool HasItem (string itemId) {
         for (var i = 0; i < slots.Count; i++) {
             if (!slots[i].IsEmpty) {
-                if (slots[i].Item == name) {
+                if (slots[i].ItemId == itemId) {
                     return true;
                 }
             }
@@ -146,10 +146,10 @@ public class InventoryManager : MonoBehaviour {
         return false;
     }
 
-    public int GetItemAmount (string name) {
+    public int GetItemAmount (string itemId) {
         for (var i = 0; i < slots.Count; i++) {
             if (!slots[i].IsEmpty) {
-                if (slots[i].Item == name) {
+                if (slots[i].ItemId == itemId) {
                     return slots[i].Amount;
                 }
             }
@@ -158,10 +158,10 @@ public class InventoryManager : MonoBehaviour {
         return 0;
     }
 
-    InventorySlot GetItemSlot (string name) {
+    InventorySlot GetItemSlot (string itemId) {
         for (var i = 0; i < slots.Count; i++) {
             if (!slots[i].IsEmpty) {
-                if (slots[i].Item == name) {
+                if (slots[i].ItemId == itemId) {
                     return slots[i];
                 }
             }
@@ -170,10 +170,10 @@ public class InventoryManager : MonoBehaviour {
         return null;
     }
 
-    int GetItemSlotIndex (string name) {
+    int GetItemSlotIndex (string itemId) {
         for (var i = 0; i < slots.Count; i++) {
             if (!slots[i].IsEmpty) {
-                if (slots[i].Item == name) {
+                if (slots[i].ItemId == itemId) {
                     return i;
                 }
             }

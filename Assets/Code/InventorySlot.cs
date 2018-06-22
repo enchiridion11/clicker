@@ -10,11 +10,9 @@ public class InventorySlot : MonoBehaviour {
 
     #region Properties
 
-    public int Index { get; set; }
-
     public InventoryItemPresenter ItemPresenter { get; set; }
 
-    public string Item { get; set; }
+    public string ItemId { get; set; }
 
     public int Amount { get; set; }
 
@@ -23,8 +21,6 @@ public class InventorySlot : MonoBehaviour {
     #endregion
 
     #region Events
-
-    public Action<string> OnAddMinedResource;
 
     #endregion
 
@@ -54,8 +50,8 @@ public class InventorySlot : MonoBehaviour {
         InventoryManager.Instance.OnAddCraftedItem -= IncreaseAmount;
     }
 
-    void IncreaseAmount (string name) {
-        if (Item == name) {
+    void IncreaseAmount (string itemId) {
+        if (ItemId == itemId) {
             Amount++;
             ItemPresenter.SetAmount (Amount);
         }
@@ -69,7 +65,7 @@ public class InventorySlot : MonoBehaviour {
     public void RemoveItem () {
         Destroy (ItemPresenter.gameObject);
         ItemPresenter = null;
-        Item = null;
+        ItemId = null;
         Amount = 0;
         IsEmpty = true;
     }
