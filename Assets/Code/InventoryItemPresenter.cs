@@ -54,7 +54,7 @@ public class InventoryItemPresenter : MonoBehaviour {
     }
 
     public void Sell () {
-        var dialog = UIManager.Instance.OpenDialog<UISellDialog> (UIWindowManager.Instance.SELL);
+        var dialog = UIManager.Instance.OpenDialog<UISellDialog> (UIWindowManager.SELL);
         dialog.Initialize (id);
     }
 

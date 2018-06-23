@@ -9,6 +9,8 @@ public static class Data {
 
     public static Item[] Items;
 
+    public static CurrencyDefaults[] CurrencyDefaults;
+
     #endregion
 
     #region Methods
@@ -25,4 +27,15 @@ public static class Data {
     }
 
     #endregion
+}
+
+public class CurrencyDefaults {
+    public string Currency { get; set; }
+
+    public int Amount { get; set; }
+
+    public CurrencyDefaults (string currency, int amount) {
+        Currency = currency;
+        Amount = amount;
+    }
 }

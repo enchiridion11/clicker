@@ -11,12 +11,20 @@ public class UIWindowManager : MonoBehaviour {
 
     public static UIWindowManager Instance;
 
-    public string SELL {
+    public static string SELL {
         get { return "UI Windows/ui_dialog_sell"; }
     }
 
-    public string ALERT {
-        get { return "UI Windows/ui_dialog"; }
+    public static string ALERT {
+        get { return "UI Windows/ui_dialog_alert"; }
+    }
+    
+    public static string CONFIRM {
+        get { return "UI Windows/ui_dialog_confirm"; }
+    }
+    
+    public static string PROMPT {
+        get { return "UI Windows/ui_dialog_prompt"; }
     }
 
     #endregion

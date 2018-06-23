@@ -26,6 +26,9 @@ public class DataManager : MonoBehaviour {
     [SerializeField]
     UIWindowManager uIWindowManager;
 
+    [SerializeField]
+    CurrencyManager currencyManager;
+
     #endregion
 
     #region Events
@@ -42,7 +45,7 @@ public class DataManager : MonoBehaviour {
 
     void Update () {
         if (Input.GetKeyDown (KeyCode.Space)) {
-            var test = UIManager.Instance.OpenWindow<UISellDialog> (UIWindowManager.Instance.SELL);
+            var test = UIManager.Instance.OpenDialog<UISellDialog> (UIWindowManager.SELL);
             test.Initialize ("pickaxe");
         }
     }
@@ -68,6 +71,8 @@ public class DataManager : MonoBehaviour {
             // load database
             Data.Items = DataConvert.JSONToItems (data["database"]);
 
+           // Data.CurrencyDefaults = DataConvert.JSONToCurrencyDefaults (data["currencyDefaults"]);
+
             InitializeManagers ();
         }
         else {
@@ -81,6 +86,7 @@ public class DataManager : MonoBehaviour {
         inventoryManager.Initialize ();
         craftingManager.Initialize ();
         uIWindowManager.Initialize ();
+        currencyManager.Initialize ();
     }
 
     #endregion

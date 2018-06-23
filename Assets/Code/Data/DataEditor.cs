@@ -178,7 +178,7 @@ public class DataEditor : EditorWindow {
 
         GUI.color = colorDefault;
         if (GUILayout.Button ("Save JSON")) {
-            SaveGameData ();
+            SaveItemDatabase ();
         }
         
         GUI.color = colorDefault;
@@ -556,7 +556,7 @@ public class DataEditor : EditorWindow {
         }
     }
 
-    void SaveGameData () {
+    void SaveItemDatabase () {
         var dataAsJson = JsonUtility.ToJson (itemDb);
 
         var filePath = Application.dataPath + JsonPath;
@@ -570,6 +570,8 @@ public class DataEditor : EditorWindow {
 
         EditorUtility.DisplayDialog ("Great Success", "Data saved successfully!", "Ok");
     }
+    
+    //TODO: add saving of currency defaults
 
     #endregion
 }

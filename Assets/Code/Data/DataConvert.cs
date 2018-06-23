@@ -20,7 +20,7 @@ public static class DataConvert {
 
         return items.ToArray ();
     }
-    
+
     public static List<Item> JSONToItemDatabase (JSONObject json) {
         var items = new List<Item> ();
         for (var i = 0; i < json.list.Count; i++) {
@@ -52,6 +52,29 @@ public static class DataConvert {
         }
 
         return requirements;
+    }
+
+    public static CurrencyDefaults[] JSONToCurrencyDefaults (JSONObject json) {
+        var currencies = new List<CurrencyDefaults> ();
+        for (var i = 0; i < json.list.Count; i++) {
+            var data = json.list[i];
+            currencies.Add (new CurrencyDefaults (
+                data.ToStringSafe ("currency"),
+                data.ToIntSafe ("amount")
+            ));
+        }
+
+        return currencies.ToArray ();
+    }
+
+    //TODO: temp until added to json
+    public static CurrencyDefaults[] SetCurrencyDefaults (int count) {
+        var currencies = new List<CurrencyDefaults> ();
+        for (var i = 0; i < count; i++) {
+            currencies.Add (new CurrencyDefaults ("", 0));
+        }
+
+        return currencies.ToArray ();
     }
 
     static string ToStringSafe (this JSONObject json, string property) {
