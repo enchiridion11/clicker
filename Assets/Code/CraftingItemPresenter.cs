@@ -122,7 +122,8 @@ public class CraftingItemPresenter : MonoBehaviour {
             CheckRequirements (id);
         }
         else {
-            UIManager.Instance.DisplayDialog ("warning", "requirements not met!", "ok");
+            var dialog = UIManager.Instance.OpenDialog<UIAlertDialog> (UIWindowManager.Instance.ALERT);
+            dialog.Initialize ("warning", "requirements not met!", "ok");
         }
     }
 

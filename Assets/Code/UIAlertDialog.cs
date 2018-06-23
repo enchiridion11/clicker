@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class UIDisplayDialog : MonoBehaviour {
+public class UIAlertDialog : MonoBehaviour {
     #region Fields
 
     [SerializeField]

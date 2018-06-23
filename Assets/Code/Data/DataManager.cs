@@ -19,9 +19,12 @@ public class DataManager : MonoBehaviour {
 
     [SerializeField]
     CraftingManager craftingManager;
-    
+
     [SerializeField]
-    UIManager uiManager;
+    UIManager uIManager;
+
+    [SerializeField]
+    UIWindowManager uIWindowManager;
 
     #endregion
 
@@ -35,6 +38,13 @@ public class DataManager : MonoBehaviour {
 
     void Awake () {
         StartCoroutine (LoadStatsFile ());
+    }
+
+    void Update () {
+        if (Input.GetKeyDown (KeyCode.Space)) {
+            var test = UIManager.Instance.OpenWindow<UISellDialog> (UIWindowManager.Instance.SELL);
+            test.Initialize ("pickaxe");
+        }
     }
 
     #endregion
@@ -66,11 +76,12 @@ public class DataManager : MonoBehaviour {
     }
 
     void InitializeManagers () {
-        uiManager.Initialize ();
+        uIManager.Initialize ();
         miningManager.Initialize ();
         inventoryManager.Initialize ();
         craftingManager.Initialize ();
-        }
+        uIWindowManager.Initialize ();
+    }
 
     #endregion
 }

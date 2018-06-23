@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -13,20 +14,22 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     Transform dialogs;
 
-    [Header ("Other"), SerializeField]
-    GameObject overlay;
-
-    [Header ("Dialogs"), SerializeField]
-    GameObject displayDialog;
-
     [SerializeField]
-    GameObject sellDialog;
+    GameObject overlay;
 
     #endregion
 
     #region Properties
 
     public static UIManager Instance { get; private set; }
+
+    public Transform Windows {
+        get { return windows; }
+    }
+
+    public Transform Dialogs {
+        get { return dialogs; }
+    }
 
     public GameObject Overlay {
         get { return overlay; }
@@ -48,22 +51,13 @@ public class UIManager : MonoBehaviour {
         Instance = this;
     }
 
-    public void DisplayDialog (string title, string message, string button, UnityAction callback = null) {
+    public T OpenDialog<T> (string dialog) {
         overlay.SetActive (true);
-        var dialog = Instantiate (displayDialog).GetComponent<UIDisplayDialog> ();
-        dialog.Initialize (title, message, button, callback);
-        dialog.transform.SetParent (dialogs);
-        dialog.transform.localScale = Vector3.one;
-        dialog.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
+        return UIWindowManager.Instance.GetDialog (dialog).GetComponent<T> ();
     }
 
-    public void SellDialog (string itemId) {
-        overlay.SetActive (true);
-        var dialog = Instantiate (sellDialog).GetComponent<UISellDialog> ();
-        dialog.Initialize (itemId);
-        dialog.transform.SetParent (dialogs);
-        dialog.transform.localScale = Vector3.one;
-        dialog.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
+    public T OpenWindow<T> (string window) {
+        return UIWindowManager.Instance.GetWindow (window).GetComponent<T> ();
     }
 
     public Sprite GetItemIcon (string itemId) {

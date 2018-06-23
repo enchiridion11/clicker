@@ -183,7 +183,8 @@ public class InventoryManager : MonoBehaviour {
     }
 
     void ShowVictoryScreen () {
-        UIManager.Instance.DisplayDialog ("you win", "now go fiddle your fiddle", "fiddle!", RestartGame);
+        var dialog = UIManager.Instance.OpenDialog<UIAlertDialog> (UIWindowManager.Instance.ALERT);
+        dialog.Initialize ("you win", "now go fiddle your fiddle", "fiddle!", RestartGame);
     }
 
     void RestartGame () {
