@@ -14,23 +14,23 @@ MonoBehaviour:
   database:
   - id: stone
     clicks: 3
-    sellAmount: 0
+    sellAmount: 1
     requirements: []
   - id: copper
     clicks: 3
-    sellAmount: 0
+    sellAmount: 1
     requirements: []
   - id: iron_ore
     clicks: 3
-    sellAmount: 0
+    sellAmount: 1
     requirements: []
   - id: coal
     clicks: 3
-    sellAmount: 0
+    sellAmount: 1
     requirements: []
   - id: log
     clicks: 3
-    sellAmount: 0
+    sellAmount: 1
     requirements: []
   - id: gold
     clicks: 0
@@ -42,7 +42,7 @@ MonoBehaviour:
     requirements: []
   - id: stone_furnace
     clicks: 0
-    sellAmount: 0
+    sellAmount: 5
     requirements:
     - item: stone
       amount: 5
@@ -96,7 +96,7 @@ MonoBehaviour:
       amount: 10
   - id: brick
     clicks: 0
-    sellAmount: 0
+    sellAmount: 20
     requirements:
     - item: stone_furnace
       amount: 1
@@ -108,7 +108,7 @@ MonoBehaviour:
       amount: 5
   - id: copper_bar
     clicks: 0
-    sellAmount: 0
+    sellAmount: 20
     requirements:
     - item: stone_furnace
       amount: 1
@@ -120,7 +120,7 @@ MonoBehaviour:
       amount: 5
   - id: iron_bar
     clicks: 0
-    sellAmount: 0
+    sellAmount: 20
     requirements:
     - item: stone_furnace
       amount: 1
@@ -132,7 +132,7 @@ MonoBehaviour:
       amount: 5
   - id: plank
     clicks: 0
-    sellAmount: 0
+    sellAmount: 20
     requirements:
     - item: stone_furnace
       amount: 1
@@ -142,7 +142,7 @@ MonoBehaviour:
       amount: 10
   - id: violin
     clicks: 0
-    sellAmount: 0
+    sellAmount: 80
     requirements:
     - item: brick
       amount: 1

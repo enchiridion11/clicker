@@ -127,10 +127,6 @@ public class InventoryManager : MonoBehaviour {
             var slot = GetItemSlot (item.Key);
 
             slot.DecreaseAmount (item.Value);
-
-            if (slot.Amount <= 0) {
-                slot.RemoveItem ();
-            }
         }
     }
 
@@ -180,6 +176,21 @@ public class InventoryManager : MonoBehaviour {
         }
 
         return -1;
+    }
+
+    public void SellItem (string itemId) {
+        var dialog = UIManager.Instance.OpenDialog<UISellDialog> (UIWindowManager.SELL);
+        var sellAmount = Data.GetItemData (itemId).SellAmount;
+        dialog.Initialize (itemId, sellAmount);
+    }
+
+    public void OnSellItem (string itemId) {
+        var sellAmount = Data.GetItemData (itemId).SellAmount;
+        CurrencyManager.Instance.IncreaseCurrency ("gold", sellAmount);
+
+        var slot = GetItemSlot (itemId);
+        //TODO: add amount to dialog
+        slot.DecreaseAmount (1);
     }
 
     void ShowVictoryScreen () {

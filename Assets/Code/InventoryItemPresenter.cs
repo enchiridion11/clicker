@@ -16,7 +16,7 @@ public class InventoryItemPresenter : MonoBehaviour {
     [SerializeField]
     ParticleSystem particles;
 
-    string id;
+    string itemId;
 
     #endregion
 
@@ -38,8 +38,8 @@ public class InventoryItemPresenter : MonoBehaviour {
         SubscribeToEvents ();
 
         SetAmount (amount);
-        id = itemId;
-        itemImage.sprite = UIManager.Instance.GetItemIcon (id);
+        this.itemId = itemId;
+        itemImage.sprite = UIManager.Instance.GetItemIcon (this.itemId);
     }
 
     void SubscribeToEvents () {
@@ -54,8 +54,7 @@ public class InventoryItemPresenter : MonoBehaviour {
     }
 
     public void Sell () {
-        var dialog = UIManager.Instance.OpenDialog<UISellDialog> (UIWindowManager.SELL);
-        dialog.Initialize (id);
+        InventoryManager.Instance.SellItem (itemId);
     }
 
     #endregion

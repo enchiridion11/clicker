@@ -45,9 +45,10 @@ public class Item {
 
     #region Constructors
 
-    public Item (string id, int clicks, List<ItemRequirements> requirements) {
+    public Item (string id, int clicks, int sellAmount, List<ItemRequirements> requirements) {
         this.id = id;
         this.clicks = clicks;
+        this.sellAmount = sellAmount;
         this.requirements = requirements;
     }
 

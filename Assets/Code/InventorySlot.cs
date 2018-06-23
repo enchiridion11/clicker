@@ -59,7 +59,12 @@ public class InventorySlot : MonoBehaviour {
 
     public void DecreaseAmount (int amount) {
         Amount -= amount;
-        ItemPresenter.SetAmount (Amount);
+        if (Amount > 0) {
+            ItemPresenter.SetAmount (Amount);
+        }
+        else {
+            RemoveItem ();
+        }
     }
 
     public void RemoveItem () {

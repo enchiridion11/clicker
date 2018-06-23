@@ -8,10 +8,10 @@ public class CurrencyManager : MonoBehaviour {
     #region Fields
 
     [SerializeField]
-    TextMeshProUGUI goldText;
+    TextMeshProUGUI currencyText;
 
     [SerializeField]
-    TextMeshProUGUI diamondText;
+    TextMeshProUGUI premiumCurrencyText;
 
     int currencyAmount;
     int premiumCurrencyAmount;
@@ -46,17 +46,19 @@ public class CurrencyManager : MonoBehaviour {
         Currency[0].Currency = "diamond";
         premiumCurrencyAmount = Currency[0].Amount = 50;
 
-        goldText.text = currencyAmount.ToString ();
-        diamondText.text = premiumCurrencyAmount.ToString ();
+        currencyText.text = currencyAmount.ToString ();
+        premiumCurrencyText.text = premiumCurrencyAmount.ToString ();
     }
 
     public void IncreaseCurrency (string currency, int amount) {
         switch (currency) {
             case "gold":
                 currencyAmount += amount;
+                currencyText.text = currencyAmount.ToString ();
                 break;
             case "diamonds":
-                currencyAmount += amount;
+                premiumCurrencyAmount += amount;
+                premiumCurrencyText.text = premiumCurrencyAmount.ToString ();
                 break;
         }
     }
@@ -65,9 +67,11 @@ public class CurrencyManager : MonoBehaviour {
         switch (currency) {
             case "gold":
                 currencyAmount -= amount;
+                currencyText.text = currencyAmount.ToString ();
                 break;
             case "diamonds":
-                currencyAmount -= amount;
+                premiumCurrencyAmount -= amount;
+                premiumCurrencyText.text = premiumCurrencyAmount.ToString ();
                 break;
         }
     }

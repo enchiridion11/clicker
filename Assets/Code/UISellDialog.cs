@@ -12,7 +12,7 @@ public class UISellDialog : MonoBehaviour {
     [SerializeField]
     TextMeshProUGUI messageText;
 
-    int sellAmount;
+    string itemId;
 
     #endregion
 
@@ -32,13 +32,14 @@ public class UISellDialog : MonoBehaviour {
 
     #endregion
 
-    public void Initialize (string itemId) {
-        sellAmount = Data.GetItemData (itemId).Clicks;
+    public void Initialize (string itemId, int sellAmount) {
+        this.itemId = itemId;
+
         messageText.text = string.Format ("Sell {0} for <color=#F92772>{1}</color> gold?", itemId, sellAmount);
     }
 
     public void Sell () {
-        CurrencyManager.Instance.IncreaseCurrency ("gold", sellAmount);
+        InventoryManager.Instance.OnSellItem (itemId);
         Close ();
     }
 

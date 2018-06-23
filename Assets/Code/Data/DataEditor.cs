@@ -48,6 +48,7 @@ public class DataEditor : EditorWindow {
     // item class
     SerializedProperty id;
     SerializedProperty clicks;
+    SerializedProperty sellAmount;
     SerializedProperty requirementsArray;
     SerializedProperty requirementName;
     SerializedProperty requirementAmount;
@@ -168,7 +169,7 @@ public class DataEditor : EditorWindow {
 
             hasLooped = false;
 
-            itemDb.Add (new Item ("", 0, null));
+            itemDb.Add (new Item ("", 0, 0, null));
 
             RefreshDatabase ();
             state = State.ADD;
@@ -241,6 +242,7 @@ public class DataEditor : EditorWindow {
         var itemsArray = itemDbList.GetArrayElementAtIndex (itemDbList.arraySize - 1);
         id = itemsArray.FindPropertyRelative ("id");
         clicks = itemsArray.FindPropertyRelative ("clicks");
+        sellAmount = itemsArray.FindPropertyRelative ("sellAmount");
         requirementsArray = itemsArray.FindPropertyRelative ("requirements");
         
         EditorGUILayout.LabelField ("Name", EditorStyles.boldLabel);
@@ -248,6 +250,9 @@ public class DataEditor : EditorWindow {
         
         EditorGUILayout.LabelField ("Clicks", EditorStyles.boldLabel);
         clicks.intValue = EditorGUILayout.IntField (clicks.intValue);
+        
+        EditorGUILayout.LabelField ("Sell Amount", EditorStyles.boldLabel);
+        sellAmount.intValue = EditorGUILayout.IntField (sellAmount.intValue);
 
         if (itemDb.Count > 1) {
             GUI.color = colorGreen;
@@ -294,6 +299,7 @@ public class DataEditor : EditorWindow {
             AddItemToPopUpList (id.stringValue);
             itemDb.Item (itemDb.Count - 1).Id = id.stringValue;
             itemDb.Item (itemDb.Count - 1).Clicks = clicks.intValue;
+            itemDb.Item (itemDb.Count - 1).SellAmount = sellAmount.intValue;
             itemDb.Item (itemDb.Count - 1).Requirements = SerializedArrayToList (requirementsArray);
 
             //clear fields
@@ -337,6 +343,9 @@ public class DataEditor : EditorWindow {
             
             clicks = itemsArray.FindPropertyRelative ("clicks");
             clicks.intValue = itemDb.Item (selectedItem).Clicks;
+            
+            sellAmount = itemsArray.FindPropertyRelative ("sellAmount");
+            sellAmount.intValue = itemDb.Item (selectedItem).SellAmount;
 
             requirementsArray = itemsArray.FindPropertyRelative ("requirements");
             if (requirementsArray.arraySize > 0) {
@@ -363,6 +372,9 @@ public class DataEditor : EditorWindow {
         
         EditorGUILayout.LabelField ("Clicks", EditorStyles.boldLabel);
         clicks.intValue = EditorGUILayout.IntField (clicks.intValue);
+        
+        EditorGUILayout.LabelField ("Sell Amount", EditorStyles.boldLabel);
+        sellAmount.intValue = EditorGUILayout.IntField (sellAmount.intValue);
 
         if (itemDb.Count > 0) {
             GUI.color = colorGreen;
@@ -420,6 +432,7 @@ public class DataEditor : EditorWindow {
             oldItemName = itemDb.Item (selectedItem).Id;
             itemDb.Item (selectedItem).Id = id.stringValue;
             itemDb.Item (selectedItem).Clicks = clicks.intValue;
+            itemDb.Item (selectedItem).SellAmount = sellAmount.intValue;
             itemDb.Item (selectedItem).Requirements = SerializedArrayToList (requirementsArray);
 
             if (oldItemName != id.stringValue) {

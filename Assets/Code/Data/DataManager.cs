@@ -43,13 +43,6 @@ public class DataManager : MonoBehaviour {
         StartCoroutine (LoadStatsFile ());
     }
 
-    void Update () {
-        if (Input.GetKeyDown (KeyCode.Space)) {
-            var test = UIManager.Instance.OpenDialog<UISellDialog> (UIWindowManager.SELL);
-            test.Initialize ("pickaxe");
-        }
-    }
-
     #endregion
 
     IEnumerator LoadStatsFile () {
@@ -71,7 +64,7 @@ public class DataManager : MonoBehaviour {
             // load database
             Data.Items = DataConvert.JSONToItems (data["database"]);
 
-           // Data.CurrencyDefaults = DataConvert.JSONToCurrencyDefaults (data["currencyDefaults"]);
+            // Data.CurrencyDefaults = DataConvert.JSONToCurrencyDefaults (data["currencyDefaults"]);
 
             InitializeManagers ();
         }
