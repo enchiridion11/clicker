@@ -18,13 +18,17 @@ public class UIWindowManager : MonoBehaviour {
     public static string ALERT {
         get { return "UI Windows/ui_dialog_alert"; }
     }
-    
+
     public static string CONFIRM {
         get { return "UI Windows/ui_dialog_confirm"; }
     }
-    
+
     public static string PROMPT {
         get { return "UI Windows/ui_dialog_prompt"; }
+    }
+
+    public static string ITEM_INFO {
+        get { return "UI Windows/ui_dialog_itemInfo"; }
     }
 
     #endregion
@@ -40,19 +44,11 @@ public class UIWindowManager : MonoBehaviour {
     }
 
     public GameObject GetDialog (string dialog) {
-        var go = Instantiate (Resources.Load<GameObject> (dialog));
-        go.transform.SetParent (UIManager.Instance.Dialogs);
-        go.transform.localScale = Vector3.one;
-        go.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
-        return go;
+        return Instantiate (Resources.Load<GameObject> (dialog));
     }
 
     public GameObject GetWindow (string window) {
-        var go = Instantiate (Resources.Load<GameObject> (window));
-        go.transform.SetParent (UIManager.Instance.Windows);
-        go.transform.localScale = Vector3.one;
-        go.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
-        return go;
+        return Instantiate (Resources.Load<GameObject> (window));
     }
 
     #endregion

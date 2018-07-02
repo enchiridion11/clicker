@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CraftingItemPresenter : MonoBehaviour {
@@ -18,7 +19,7 @@ public class CraftingItemPresenter : MonoBehaviour {
     [SerializeField]
     CanvasGroup canvasGroup;
 
-    string id;
+    string itemId;
 
     int amount;
 
@@ -49,17 +50,19 @@ public class CraftingItemPresenter : MonoBehaviour {
     public void Initialize (string itemId) {
         SubscribeToEvents ();
 
-        id = itemId;
+        this.itemId = itemId;
         itemImage.sprite = UIManager.Instance.GetItemIcon (itemId);
+        requirements = Data.GetItemData (itemId).GetItemRequirements (itemId);
+
         amountText.text = amount.ToString ();
     }
 
     void SubscribeToEvents () {
-        InventoryManager.Instance.OnAddMinedResource += CheckRequirements;
+        InventoryManager.Instance.OnItemChange += CheckRequirements;
     }
 
     void UnsubscribeFromEvents () {
-        InventoryManager.Instance.OnAddMinedResource -= CheckRequirements;
+        InventoryManager.Instance.OnItemChange -= CheckRequirements;
     }
 
     public void SetAmount (int value) {
@@ -67,45 +70,40 @@ public class CraftingItemPresenter : MonoBehaviour {
         amountText.text = amount.ToString ();
     }
 
-    void CheckRequirements (string resource) {
-        requirements = Data.GetItemData (id).GetItemRequirements (id);
-        if (requirements.Count > 0) {
-            var index = 0;
-            print ("requirements.Count: " + requirements.Count);
-            // check if requirements exist in inventory and if there are enough
-            foreach (var requirement in requirements) {
-                print ("requirement.Key: " + requirement.Key + ", resource: " + resource);
+    void CheckRequirements (string itemId, int amount) {
+        // if item added to inventory is not in requirements, do nothing
+        if (!RequirementHasItem (itemId)) {
+            return;
+        }
 
-                if (InventoryManager.Instance.HasItem (requirement.Key)) {
-                    print ("contains: " + requirement.Key);
-                    print ("amount: " + InventoryManager.Instance.GetItemAmount (requirement.Key));
-                    if (InventoryManager.Instance.GetItemAmount (requirement.Key) < requirement.Value) {
-                        print ("requirement.Key amount: " + InventoryManager.Instance.GetItemAmount (requirement.Key) + ", requirement.Value:" + requirement.Value);
-                        canCraft = false;
-                        CalculateCraftingAmount (requirements);
-                        return;
-                    }
-                }
-                else {
-                    canCraft = false;
-                    CalculateCraftingAmount (requirements);
-                    return;
-                }
-
-                index++;
+        // check if requirements exist in inventory and if there are enough
+        foreach (var requirement in requirements) {
+            print ("amount: " + amount);
+            if (amount < requirement.Value) {
+                print ("requirements NOT met");
+                canCraft = false;
+                CalculateCraftingAmount ();
+                return;
             }
+        }
 
-            print ("requirements met");
-            // requirements met, can now set amount
-            canCraft = true;
-            CalculateCraftingAmount (requirements);
-        }
-        else {
-            GetComponent<CanvasGroup> ().alpha = 1f;
-        }
+        print ("requirements met");
+        // requirements met, can now set amount
+        canCraft = true;
+        CalculateCraftingAmount ();
     }
 
-    void CalculateCraftingAmount (Dictionary<string, int> requirements) {
+    bool RequirementHasItem (string itemId) {
+        foreach (var requirement in requirements) {
+            if (requirement.Key == itemId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    void CalculateCraftingAmount () {
         var amount = 0;
         foreach (var requirement in requirements) {
             amount = InventoryManager.Instance.GetItemAmount (requirement.Key) / requirement.Value;
@@ -117,14 +115,28 @@ public class CraftingItemPresenter : MonoBehaviour {
 
     public void Craft () {
         if (canCraft) {
-            InventoryManager.Instance.RemoveRequirements (requirements);
-            InventoryManager.Instance.AddCraftedItem (id);
-            CheckRequirements (id);
+            InventoryManager.Instance.RemoveItem (requirements);
+            InventoryManager.Instance.AddCraftedItem (itemId);
         }
         else {
-            var dialog = UIManager.Instance.OpenDialog<UIAlertDialog> (UIWindowManager.ALERT);
+            var dialog = UIManager.Instance.OpenDialog<UIAlertDialog> (UIWindowManager.ALERT, UIManager.Instance.Dialogs);
             dialog.Initialize ("warning", "requirements not met!", "ok");
         }
+    }
+
+    public void ShowItemInfoDialog () {
+        var dialog = UIManager.Instance.OpenDialog<UIItemInfo> (UIWindowManager.ITEM_INFO, UIManager.Instance.Dialogs, false);
+        var button = GetComponent<UIButtonHold> ();
+        var canvas = UIManager.Instance.Canvas;
+        var offset = new Vector2 (0, 40);
+
+        Vector2 pos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle (canvas.transform as RectTransform, Input.mousePosition, canvas.worldCamera, out pos);
+
+        dialog.GetComponent<RectTransform> ().localPosition = pos + offset;
+        dialog.Initialize (itemId);
+        button.OnClick.AddListener (dialog.Close);
+        button.OnRelease.AddListener (dialog.Close);
     }
 
     #endregion

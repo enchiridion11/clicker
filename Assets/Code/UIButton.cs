@@ -10,6 +10,8 @@ public class UIButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     bool isPressed;
 
+    public PointerEventData CurrentEventData { get; private set; }
+
     #endregion
 
     #region Properties
@@ -18,13 +20,14 @@ public class UIButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     #region Methods
 
+    #region Unity
+
     void OnEnable () {
         animator = GetComponent<Animator> ();
     }
 
-    #region Unity
-
     public void OnPointerDown (PointerEventData eventData) {
+        CurrentEventData = eventData;
         if (animator != null) {
             animator.Play ("ui_button_down");
         }
@@ -41,7 +44,7 @@ public class UIButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     }
 
     public void OnPointerExit (PointerEventData eventData) {
-        if (isPressed && animator) {
+        if (isPressed && animator != null) {
             if (animator != null) {
                 animator.Play ("ui_button_up");
             }

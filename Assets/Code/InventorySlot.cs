@@ -41,19 +41,18 @@ public class InventorySlot : MonoBehaviour {
     }
 
     void SubscribeToEvents () {
-        InventoryManager.Instance.OnAddMinedResource += IncreaseAmount;
-        InventoryManager.Instance.OnAddCraftedItem += IncreaseAmount;
+        InventoryManager.Instance.OnItemChange += IncreaseAmount;
     }
 
     void UnsubscribeFromEvents () {
-        InventoryManager.Instance.OnAddMinedResource -= IncreaseAmount;
-        InventoryManager.Instance.OnAddCraftedItem -= IncreaseAmount;
+        InventoryManager.Instance.OnItemChange -= IncreaseAmount;
     }
 
-    void IncreaseAmount (string itemId) {
+    void IncreaseAmount (string itemId, int currentAmount) {
         if (ItemId == itemId) {
             Amount++;
             ItemPresenter.SetAmount (Amount);
+            print ("slot amount: " + Amount);
         }
     }
 

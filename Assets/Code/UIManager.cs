@@ -8,6 +8,9 @@ using UnityEngine.Events;
 public class UIManager : MonoBehaviour {
     #region Fields
 
+    [SerializeField]
+    Canvas canvas;
+
     [Header ("Parents"), SerializeField]
     Transform windows;
 
@@ -22,6 +25,10 @@ public class UIManager : MonoBehaviour {
     #region Properties
 
     public static UIManager Instance { get; private set; }
+
+    public Canvas Canvas {
+        get { return canvas; }
+    }
 
     public Transform Windows {
         get { return windows; }
@@ -51,13 +58,21 @@ public class UIManager : MonoBehaviour {
         Instance = this;
     }
 
-    public T OpenDialog<T> (string dialog) {
-        overlay.SetActive (true);
-        return UIWindowManager.Instance.GetDialog (dialog).GetComponent<T> ();
+    public T OpenDialog<T> (string dialog, Transform parent, bool showOverlay = true) {
+        overlay.SetActive (showOverlay);
+        var go = UIWindowManager.Instance.GetDialog (dialog);
+        go.transform.SetParent (parent);
+        go.transform.localScale = Vector3.one;
+        go.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
+        return go.GetComponent<T> ();
     }
 
-    public T OpenWindow<T> (string window) {
-        return UIWindowManager.Instance.GetWindow (window).GetComponent<T> ();
+    public T OpenWindow<T> (string window, Transform parent) {
+        var go = UIWindowManager.Instance.GetDialog (window);
+        go.transform.SetParent (parent);
+        go.transform.localScale = Vector3.one;
+        go.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
+        return go.GetComponent<T> ();
     }
 
     public Sprite GetItemIcon (string itemId) {

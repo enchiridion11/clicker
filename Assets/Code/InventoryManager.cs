@@ -32,8 +32,7 @@ public class InventoryManager : MonoBehaviour {
 
     #region Events
 
-    public Action<string> OnAddMinedResource;
-    public Action<string> OnAddCraftedItem;
+    public Action<string, int> OnItemChange;
 
     #endregion
 
@@ -87,8 +86,8 @@ public class InventoryManager : MonoBehaviour {
             }
         }
 
-        if (OnAddMinedResource != null) {
-            OnAddMinedResource (itemId);
+        if (OnItemChange != null) {
+            OnItemChange (itemId, GetItemAmount (itemId) + 1);
         }
     }
 
@@ -112,21 +111,25 @@ public class InventoryManager : MonoBehaviour {
             }
         }
 
-        if (OnAddMinedResource != null) {
-            OnAddMinedResource (itemId);
+        if (OnItemChange != null) {
+            OnItemChange (itemId, GetItemAmount (itemId) + 1);
         }
 
         // temp victory condition
-        if (itemId == "Violin") {
+        if (itemId == "violin") {
             ShowVictoryScreen ();
         }
     }
 
-    public void RemoveRequirements (Dictionary<string, int> items) {
+    public void RemoveItem (Dictionary<string, int> items) {
         foreach (var item in items) {
             var slot = GetItemSlot (item.Key);
 
             slot.DecreaseAmount (item.Value);
+
+            if (OnItemChange != null) {
+                OnItemChange (item.Key, GetItemAmount (item.Key));
+            }
         }
     }
 
@@ -179,7 +182,7 @@ public class InventoryManager : MonoBehaviour {
     }
 
     public void SellItem (string itemId) {
-        var dialog = UIManager.Instance.OpenDialog<UISellDialog> (UIWindowManager.SELL);
+        var dialog = UIManager.Instance.OpenDialog<UISellDialog> (UIWindowManager.SELL, UIManager.Instance.Dialogs);
         var sellAmount = Data.GetItemData (itemId).SellAmount;
         dialog.Initialize (itemId, sellAmount);
     }
@@ -194,7 +197,7 @@ public class InventoryManager : MonoBehaviour {
     }
 
     void ShowVictoryScreen () {
-        var dialog = UIManager.Instance.OpenDialog<UIAlertDialog> (UIWindowManager.ALERT);
+        var dialog = UIManager.Instance.OpenDialog<UIAlertDialog> (UIWindowManager.ALERT, UIManager.Instance.Dialogs);
         dialog.Initialize ("you win", "now go fiddle your fiddle", "fiddle!", RestartGame);
     }
 
