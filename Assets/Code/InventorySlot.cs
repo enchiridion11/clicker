@@ -52,7 +52,6 @@ public class InventorySlot : MonoBehaviour {
         if (ItemId == itemId) {
             Amount++;
             ItemPresenter.SetAmount (Amount);
-            print ("slot amount: " + Amount);
         }
     }
 
