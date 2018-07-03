@@ -41,7 +41,8 @@ public class UIItemInfo : MonoBehaviour {
             req.transform.SetParent (infoParent);
             req.transform.localScale = Vector3.one;
             req.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
-            req.Initialize (requirement.item, requirement.amount);
+            var reqsMet = InventoryManager.Instance.GetItemAmount (requirement.item) >= requirement.amount;
+            req.Initialize (requirement.item, requirement.amount, reqsMet);
         }
     }
 

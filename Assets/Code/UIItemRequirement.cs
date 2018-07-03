@@ -13,6 +13,12 @@ public class UIItemRequirement : MonoBehaviour {
     [SerializeField]
     TextMeshProUGUI amountText;
 
+    [SerializeField]
+    Color normalTextColor;
+
+    [SerializeField]
+    Color insufficientTextColor;
+
     #endregion
 
     #region Properties
@@ -25,9 +31,10 @@ public class UIItemRequirement : MonoBehaviour {
 
     #endregion
 
-    public void Initialize (string itemId, int amount) {
+    public void Initialize (string itemId, int amount, bool requirementsMet) {
         itemImage.sprite = UIManager.Instance.GetItemIcon (itemId);
         amountText.text = amount.ToString ();
+        amountText.color = requirementsMet ? normalTextColor : insufficientTextColor;
     }
 
     #endregion

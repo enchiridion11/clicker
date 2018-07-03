@@ -41,11 +41,11 @@ public class InventorySlot : MonoBehaviour {
     }
 
     void SubscribeToEvents () {
-        InventoryManager.Instance.OnItemChange += IncreaseAmount;
+        InventoryManager.Instance.OnAddItem += IncreaseAmount;
     }
 
     void UnsubscribeFromEvents () {
-        InventoryManager.Instance.OnItemChange -= IncreaseAmount;
+        InventoryManager.Instance.OnAddItem -= IncreaseAmount;
     }
 
     void IncreaseAmount (string itemId, int currentAmount) {

@@ -96,6 +96,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemImage: {fileID: 114781890308924070}
   amountText: {fileID: 114699865141815474}
+  normalTextColor: {r: 0.654902, g: 0.8862745, b: 0.18039216, a: 1}
+  insufficientTextColor: {r: 0.9764706, g: 0.15294118, b: 0.44705883, a: 1}
 --- !u!114 &114386067031075110
 MonoBehaviour:
   m_ObjectHideFlags: 1

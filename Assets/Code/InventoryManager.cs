@@ -32,7 +32,8 @@ public class InventoryManager : MonoBehaviour {
 
     #region Events
 
-    public Action<string, int> OnItemChange;
+    public Action<string, int> OnAddItem;
+    public Action<string, int> OnRemoveItem;
 
     #endregion
 
@@ -59,14 +60,14 @@ public class InventoryManager : MonoBehaviour {
     }
 
     void SubscribeToEvents () {
-        MiningManager.Instance.OnResourceMined += AddMinedResource;
+        MiningManager.Instance.OnResourceMined += AddItem;
     }
 
     void UnsubscribeFromEvents () {
-        MiningManager.Instance.OnResourceMined -= AddMinedResource;
+        MiningManager.Instance.OnResourceMined -= AddItem;
     }
 
-    void AddMinedResource (string itemId) {
+    public void AddItem (string itemId) {
         if (!HasItem (itemId)) {
             for (var i = 0; i < slots.Count; i++) {
                 if (slots[i].IsEmpty) {
@@ -86,33 +87,8 @@ public class InventoryManager : MonoBehaviour {
             }
         }
 
-        if (OnItemChange != null) {
-            OnItemChange (itemId, GetItemAmount (itemId) + 1);
-        }
-    }
-
-    public void AddCraftedItem (string itemId) {
-        if (!HasItem (itemId)) {
-            for (var i = 0; i < slots.Count; i++) {
-                if (slots[i].IsEmpty) {
-                    var item = Instantiate (itemPrefab).GetComponent<InventoryItemPresenter> ();
-                    item.Initialize (itemId, 0);
-                    item.transform.SetParent (slots[i].transform);
-                    item.transform.localScale = Vector3.one;
-                    item.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
-
-                    // add item to list
-                    slots[i].ItemPresenter = item;
-                    slots[i].ItemId = itemId;
-                    slots[i].Amount = 0;
-                    slots[i].IsEmpty = false;
-                    break;
-                }
-            }
-        }
-
-        if (OnItemChange != null) {
-            OnItemChange (itemId, GetItemAmount (itemId) + 1);
+        if (OnAddItem != null) {
+            OnAddItem (itemId, GetItemAmount (itemId) + 1);
         }
 
         // temp victory condition
@@ -121,14 +97,14 @@ public class InventoryManager : MonoBehaviour {
         }
     }
 
-    public void RemoveItem (Dictionary<string, int> items) {
+    public void RemoveItems (List<ItemRequirements> items) {
         foreach (var item in items) {
-            var slot = GetItemSlot (item.Key);
+            var slot = GetItemSlot (item.item);
 
-            slot.DecreaseAmount (item.Value);
+            slot.DecreaseAmount (item.amount);
 
-            if (OnItemChange != null) {
-                OnItemChange (item.Key, GetItemAmount (item.Key));
+            if (OnRemoveItem != null) {
+                OnRemoveItem (item.item, GetItemAmount (item.item));
             }
         }
     }

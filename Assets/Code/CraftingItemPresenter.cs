@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -25,7 +26,7 @@ public class CraftingItemPresenter : MonoBehaviour {
 
     bool canCraft;
 
-    Dictionary<string, int> requirements = new Dictionary<string, int> ();
+    List<ItemRequirements> requirements = new List<ItemRequirements> ();
 
     #endregion
 
@@ -58,11 +59,13 @@ public class CraftingItemPresenter : MonoBehaviour {
     }
 
     void SubscribeToEvents () {
-        InventoryManager.Instance.OnItemChange += CheckRequirements;
+        InventoryManager.Instance.OnAddItem += CheckRequirements;
+        InventoryManager.Instance.OnRemoveItem += CheckRequirements;
     }
 
     void UnsubscribeFromEvents () {
-        InventoryManager.Instance.OnItemChange -= CheckRequirements;
+        InventoryManager.Instance.OnAddItem -= CheckRequirements;
+        InventoryManager.Instance.OnRemoveItem -= CheckRequirements;
     }
 
     public void SetAmount (int value) {
@@ -76,26 +79,37 @@ public class CraftingItemPresenter : MonoBehaviour {
             return;
         }
 
-        // check if requirements exist in inventory and if there are enough
+        // check if inventory amount satisfies each requirement
         foreach (var requirement in requirements) {
-            print ("amount: " + amount);
-            if (amount < requirement.Value) {
-                print ("requirements NOT met");
-                canCraft = false;
-                CalculateCraftingAmount ();
-                return;
+            if (requirement.item != itemId) {
+                continue;
+            }
+
+            if (amount < requirement.amount) {
+                requirement.canCraft = false;
+                break;
+            }
+
+            requirement.canCraft = true;
+        }
+
+        canCraft = CanCraft ();
+        CalculateCraftingAmount ();
+    }
+
+    bool CanCraft () {
+        foreach (var requirement in requirements) {
+            if (!requirement.canCraft) {
+                return false;
             }
         }
 
-        print ("requirements met");
-        // requirements met, can now set amount
-        canCraft = true;
-        CalculateCraftingAmount ();
+        return true;
     }
 
     bool RequirementHasItem (string itemId) {
         foreach (var requirement in requirements) {
-            if (requirement.Key == itemId) {
+            if (requirement.item == itemId) {
                 return true;
             }
         }
@@ -104,19 +118,25 @@ public class CraftingItemPresenter : MonoBehaviour {
     }
 
     void CalculateCraftingAmount () {
-        var amount = 0;
-        foreach (var requirement in requirements) {
-            amount = InventoryManager.Instance.GetItemAmount (requirement.Key) / requirement.Value;
-        }
+        var craftAmount = new List<int> ();
+        if (canCraft) {
+            foreach (var requirement in requirements) {
+                craftAmount.Add (InventoryManager.Instance.GetItemAmount (requirement.item) / requirement.amount);
+            }
 
-        canvasGroup.alpha = canCraft ? 1f : 0.4f;
-        SetAmount (amount);
+            canvasGroup.alpha = 1f;
+            SetAmount (craftAmount.Min());
+        }
+        else {
+            canvasGroup.alpha = 0.4f;
+            SetAmount (0);
+        }
     }
 
     public void Craft () {
         if (canCraft) {
-            InventoryManager.Instance.RemoveItem (requirements);
-            InventoryManager.Instance.AddCraftedItem (itemId);
+            InventoryManager.Instance.RemoveItems (requirements);
+            InventoryManager.Instance.AddItem (itemId);
         }
         else {
             var dialog = UIManager.Instance.OpenDialog<UIAlertDialog> (UIWindowManager.ALERT, UIManager.Instance.Dialogs);

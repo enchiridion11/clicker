@@ -10,10 +10,10 @@ public class Item {
 
     [SerializeField]
     int clicks;
-    
+
     [SerializeField]
     int sellAmount;
-    
+
     [SerializeField]
     List<ItemRequirements> requirements;
 
@@ -30,7 +30,7 @@ public class Item {
         get { return clicks; }
         set { clicks = value; }
     }
-    
+
     public int SellAmount {
         get { return sellAmount; }
         set { sellAmount = value; }
@@ -60,11 +60,11 @@ public class Item {
 
     #endregion
 
-    public Dictionary<string, int> GetItemRequirements (string itemId) {
-        var req = new Dictionary<string, int> ();
+    public List<ItemRequirements> GetItemRequirements (string itemId) {
+        var req = new List<ItemRequirements> ();
         for (var i = 0; i < requirements.Count; i++) {
             if (itemId != requirements[i].item) {
-                req.Add (requirements[i].item, requirements[i].amount);
+                req.Add (new ItemRequirements (requirements[i].item, requirements[i].amount));
             }
         }
 
@@ -80,16 +80,17 @@ public class ItemRequirements {
 
     public string item;
     public int amount;
+    public bool canCraft;
 
     #endregion
-
 
     #region Properties
 
     #endregion
 
-    public ItemRequirements (string item, int amount) {
+    public ItemRequirements (string item, int amount, bool canCraft = false) {
         this.item = item;
         this.amount = amount;
+        this.canCraft = canCraft;
     }
 }
