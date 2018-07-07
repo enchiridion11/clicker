@@ -11,6 +11,12 @@ public class InventoryItemPresenter : MonoBehaviour {
     Image itemImage;
 
     [SerializeField]
+    UIBar bar;
+
+    [SerializeField]
+    CanvasGroup canvasGroup;
+
+    [SerializeField]
     TextMeshProUGUI amountText;
 
     [SerializeField]
@@ -18,9 +24,16 @@ public class InventoryItemPresenter : MonoBehaviour {
 
     string itemId;
 
+    bool isCrafting;
+
     #endregion
 
     #region Properties
+
+    public UIBar Bar {
+        get { return bar; }
+        set { bar = value; }
+    }
 
     #endregion
 
@@ -34,18 +47,33 @@ public class InventoryItemPresenter : MonoBehaviour {
 
     #endregion
 
-    public void Initialize (string itemId, int amount) {
+    public void Initialize (string itemId, int craftTime) {
         SubscribeToEvents ();
 
-        SetAmount (amount);
         this.itemId = itemId;
         itemImage.sprite = UIManager.Instance.GetItemIcon (this.itemId);
+        bar.Initialize (0, craftTime);
     }
 
     void SubscribeToEvents () {
     }
 
     void UnsubscribeFromEvents () {
+    }
+    
+    public void OnCraftStart (int craftTime) {
+        bar.Initialize (0, craftTime);
+        bar.gameObject.SetActive (true);
+        isCrafting = true;
+        print ("OnCraftStart" + bar.SliderValue);
+    }
+
+    public void OnCraftComplete (int amount) {
+        bar.gameObject.SetActive (false);
+        bar.SliderValue = 0;
+        canvasGroup.alpha = 1f;
+        SetAmount (amount);
+        isCrafting = false;
     }
 
     public void SetAmount (int amount) {
@@ -54,7 +82,9 @@ public class InventoryItemPresenter : MonoBehaviour {
     }
 
     public void Sell () {
-        InventoryManager.Instance.SellItem (itemId);
+        if (!isCrafting) {
+            InventoryManager.Instance.SellItem (itemId);
+        }
     }
 
     #endregion

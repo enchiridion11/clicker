@@ -11,7 +11,7 @@ public class MiningResource : MonoBehaviour {
     string itemId;
 
     [SerializeField]
-    MiningBar bar;
+    UIBar bar;
 
     int currentClicks = 1;
     int requiredClicks;
@@ -53,6 +53,7 @@ public class MiningResource : MonoBehaviour {
         particleMat.mainTexture = particleImage;
 
         requiredClicks = Data.GetItemData (itemId).Clicks;
+        bar.Initialize (currentClicks, requiredClicks);
     }
 
     void SubscribeToEvents () {
@@ -64,13 +65,14 @@ public class MiningResource : MonoBehaviour {
     public void Mine () {
         if (currentClicks < requiredClicks) {
             bar.gameObject.SetActive (true);
-            bar.Initialize (currentClicks, requiredClicks);
+            bar.OnUpdateValue (currentClicks);
             particles.Play ();
             currentClicks++;
         }
         else {
             currentClicks = 1;
             bar.gameObject.SetActive (false);
+            bar.SliderValue = 0;
 
             if (OnResourceMined != null) {
                 OnResourceMined (itemId);

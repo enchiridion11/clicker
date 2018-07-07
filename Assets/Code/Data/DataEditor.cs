@@ -48,6 +48,7 @@ public class DataEditor : EditorWindow {
     // item class
     SerializedProperty id;
     SerializedProperty clicks;
+    SerializedProperty craftTime;
     SerializedProperty sellAmount;
     SerializedProperty requirementsArray;
     SerializedProperty requirementName;
@@ -169,7 +170,7 @@ public class DataEditor : EditorWindow {
 
             hasLooped = false;
 
-            itemDb.Add (new Item ("", 0, 0, null));
+            itemDb.Add (new Item ("", 0, 0, 0, null));
 
             RefreshDatabase ();
             state = State.ADD;
@@ -242,6 +243,7 @@ public class DataEditor : EditorWindow {
         var itemsArray = itemDbList.GetArrayElementAtIndex (itemDbList.arraySize - 1);
         id = itemsArray.FindPropertyRelative ("id");
         clicks = itemsArray.FindPropertyRelative ("clicks");
+        craftTime = itemsArray.FindPropertyRelative ("craftTime");
         sellAmount = itemsArray.FindPropertyRelative ("sellAmount");
         requirementsArray = itemsArray.FindPropertyRelative ("requirements");
         
@@ -250,6 +252,9 @@ public class DataEditor : EditorWindow {
         
         EditorGUILayout.LabelField ("Clicks", EditorStyles.boldLabel);
         clicks.intValue = EditorGUILayout.IntField (clicks.intValue);
+        
+        EditorGUILayout.LabelField ("Craft Time", EditorStyles.boldLabel);
+        craftTime.intValue = EditorGUILayout.IntField (craftTime.intValue);
         
         EditorGUILayout.LabelField ("Sell Amount", EditorStyles.boldLabel);
         sellAmount.intValue = EditorGUILayout.IntField (sellAmount.intValue);
@@ -299,6 +304,7 @@ public class DataEditor : EditorWindow {
             AddItemToPopUpList (id.stringValue);
             itemDb.Item (itemDb.Count - 1).Id = id.stringValue;
             itemDb.Item (itemDb.Count - 1).Clicks = clicks.intValue;
+            itemDb.Item (itemDb.Count - 1).CraftTime = craftTime.intValue;
             itemDb.Item (itemDb.Count - 1).SellAmount = sellAmount.intValue;
             itemDb.Item (itemDb.Count - 1).Requirements = SerializedArrayToList (requirementsArray);
 
@@ -344,6 +350,9 @@ public class DataEditor : EditorWindow {
             clicks = itemsArray.FindPropertyRelative ("clicks");
             clicks.intValue = itemDb.Item (selectedItem).Clicks;
             
+            craftTime = itemsArray.FindPropertyRelative ("craftTime");
+            craftTime.intValue = itemDb.Item (selectedItem).CraftTime;
+            
             sellAmount = itemsArray.FindPropertyRelative ("sellAmount");
             sellAmount.intValue = itemDb.Item (selectedItem).SellAmount;
 
@@ -372,6 +381,9 @@ public class DataEditor : EditorWindow {
         
         EditorGUILayout.LabelField ("Clicks", EditorStyles.boldLabel);
         clicks.intValue = EditorGUILayout.IntField (clicks.intValue);
+        
+        EditorGUILayout.LabelField ("Craft Time", EditorStyles.boldLabel);
+        craftTime.intValue = EditorGUILayout.IntField (craftTime.intValue);
         
         EditorGUILayout.LabelField ("Sell Amount", EditorStyles.boldLabel);
         sellAmount.intValue = EditorGUILayout.IntField (sellAmount.intValue);
@@ -432,6 +444,7 @@ public class DataEditor : EditorWindow {
             oldItemName = itemDb.Item (selectedItem).Id;
             itemDb.Item (selectedItem).Id = id.stringValue;
             itemDb.Item (selectedItem).Clicks = clicks.intValue;
+            itemDb.Item (selectedItem).CraftTime = craftTime.intValue;
             itemDb.Item (selectedItem).SellAmount = sellAmount.intValue;
             itemDb.Item (selectedItem).Requirements = SerializedArrayToList (requirementsArray);
 

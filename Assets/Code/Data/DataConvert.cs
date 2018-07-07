@@ -14,6 +14,7 @@ public static class DataConvert {
             items.Add (new Item (
                 data.ToStringSafe ("id"),
                 data.ToIntSafe ("clicks"),
+                data.ToIntSafe ("craftTime"),
                 data.ToIntSafe ("sellAmount"),
                 data.HasField ("requirements") ? JSONToItemRequirements (data["requirements"]) : null
             ));
@@ -29,6 +30,7 @@ public static class DataConvert {
             items.Add (new Item (
                 data.ToStringSafe ("id"),
                 data.ToIntSafe ("clicks"),
+                data.ToIntSafe ("craftTime"),
                 data.ToIntSafe ("sellAmount"),
                 data.HasField ("requirements") ? JSONToItemRequirements (data["requirements"]) : null
             ));

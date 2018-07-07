@@ -12,6 +12,9 @@ public class DataManager : MonoBehaviour {
     string dataFile = "data.json";
 
     [SerializeField]
+    TimeManager timeManager;
+
+    [SerializeField]
     MiningManager miningManager;
 
     [SerializeField]
@@ -74,6 +77,7 @@ public class DataManager : MonoBehaviour {
     }
 
     void InitializeManagers () {
+        timeManager.Initialize ();
         uIManager.Initialize ();
         miningManager.Initialize ();
         inventoryManager.Initialize ();

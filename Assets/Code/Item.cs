@@ -12,6 +12,9 @@ public class Item {
     int clicks;
 
     [SerializeField]
+    int craftTime;
+
+    [SerializeField]
     int sellAmount;
 
     [SerializeField]
@@ -30,6 +33,11 @@ public class Item {
         get { return clicks; }
         set { clicks = value; }
     }
+    
+    public int CraftTime {
+        get { return craftTime; }
+        set { craftTime = value; }
+    }
 
     public int SellAmount {
         get { return sellAmount; }
@@ -45,9 +53,10 @@ public class Item {
 
     #region Constructors
 
-    public Item (string id, int clicks, int sellAmount, List<ItemRequirements> requirements) {
+    public Item (string id, int clicks, int craftTime, int sellAmount, List<ItemRequirements> requirements) {
         this.id = id;
         this.clicks = clicks;
+        this.craftTime = craftTime;
         this.sellAmount = sellAmount;
         this.requirements = requirements;
     }

@@ -14,10 +14,14 @@ public class CurrencyManager : MonoBehaviour {
     TextMeshProUGUI premiumCurrencyText;
 
     [SerializeField]
+    TextMeshProUGUI timeText;
+
+    [SerializeField]
     RectTransform currencyIcon;
 
     int currencyAmount;
     int premiumCurrencyAmount;
+    int elapsedTime;
 
     #endregion
 
@@ -32,6 +36,10 @@ public class CurrencyManager : MonoBehaviour {
         set { currencyIcon = value; }
     }
 
+    public int ElapsedTime {
+        get { return elapsedTime; }
+    }
+
     #endregion
 
     #region Events
@@ -44,8 +52,17 @@ public class CurrencyManager : MonoBehaviour {
 
     #endregion
 
+    void SubscribeToEvents () {
+        TimeManager.Instance.OnTick += OnTimeElapsed;
+    }
+
+    void UnsubscribeFromEvents () {
+        TimeManager.Instance.OnTick -= OnTimeElapsed;
+    }
+
     public void Initialize () {
         Instance = this;
+        SubscribeToEvents ();
 
         //TODO: temp until added to json
         Currency = DataConvert.SetCurrencyDefaults (2);
@@ -82,6 +99,11 @@ public class CurrencyManager : MonoBehaviour {
                 premiumCurrencyText.text = premiumCurrencyAmount.ToString ();
                 break;
         }
+    }
+
+    void OnTimeElapsed (int tick) {
+        elapsedTime++;
+        timeText.text = elapsedTime.ToString ();
     }
 
     #endregion

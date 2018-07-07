@@ -52,12 +52,12 @@ public class UISellDialog : MonoBehaviour {
         itemValue = sellValue;
         spinner.Initialize (1, 1, InventoryManager.Instance.GetItemAmount (itemId));
         itemImage.sprite = UIManager.Instance.GetItemIcon (itemId);
-        messageText.text = string.Format ("for +<color=#A7E22E>{0}</color>", sellValue);
+        messageText.text = string.Format ("for <color=#A7E22E>+{0}</color>", sellValue);
     }
 
     void OnSellAmountChange (int amount) {
         sellAmount = itemValue * amount;
-        messageText.text = string.Format ("for +<color=#A7E22E>{0}</color>", sellAmount);
+        messageText.text = string.Format ("for <color=#A7E22E>+{0}</color>", sellAmount);
     }
 
     public void Sell () {

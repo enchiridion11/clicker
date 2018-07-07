@@ -14,141 +14,192 @@ MonoBehaviour:
   database:
   - id: stone
     clicks: 3
+    craftTime: 0
     sellAmount: 1
     requirements: []
   - id: copper
     clicks: 3
+    craftTime: 0
     sellAmount: 1
     requirements: []
   - id: iron_ore
     clicks: 3
+    craftTime: 0
     sellAmount: 1
     requirements: []
   - id: coal
     clicks: 3
+    craftTime: 0
     sellAmount: 1
     requirements: []
   - id: log
     clicks: 3
+    craftTime: 0
     sellAmount: 1
     requirements: []
   - id: gold
     clicks: 0
+    craftTime: 0
     sellAmount: 0
     requirements: []
   - id: diamond
     clicks: 0
+    craftTime: 0
     sellAmount: 0
     requirements: []
   - id: stone_furnace
     clicks: 0
+    craftTime: 1
     sellAmount: 5
     requirements:
     - item: stone
       amount: 5
+      canCraft: 0
   - id: pickaxe
     clicks: 0
+    craftTime: 60
     sellAmount: 0
     requirements:
     - item: log
       amount: 5
+      canCraft: 0
     - item: iron_ore
       amount: 5
+      canCraft: 0
   - id: quarry
     clicks: 0
+    craftTime: 0
     sellAmount: 0
     requirements:
     - item: log
       amount: 10
+      canCraft: 0
   - id: copper_mine
     clicks: 0
+    craftTime: 0
     sellAmount: 0
     requirements:
     - item: stone
       amount: 5
+      canCraft: 0
     - item: copper
       amount: 5
+      canCraft: 0
     - item: log
       amount: 5
+      canCraft: 0
   - id: iron_mine
     clicks: 0
+    craftTime: 0
     sellAmount: 0
     requirements:
     - item: stone
       amount: 5
+      canCraft: 0
     - item: iron_ore
       amount: 5
+      canCraft: 0
     - item: log
       amount: 5
+      canCraft: 0
   - id: coal_mine
     clicks: 0
+    craftTime: 0
     sellAmount: 0
     requirements:
     - item: stone
       amount: 5
+      canCraft: 0
     - item: log
       amount: 5
+      canCraft: 0
   - id: lumber_mill
     clicks: 0
+    craftTime: 0
     sellAmount: 0
     requirements:
     - item: stone
       amount: 10
+      canCraft: 0
   - id: brick
     clicks: 0
+    craftTime: 15
     sellAmount: 20
     requirements:
     - item: stone_furnace
       amount: 1
+      canCraft: 0
     - item: stone
       amount: 5
+      canCraft: 0
     - item: coal
       amount: 5
+      canCraft: 0
     - item: log
       amount: 5
+      canCraft: 0
   - id: copper_bar
     clicks: 0
+    craftTime: 15
     sellAmount: 20
     requirements:
     - item: stone_furnace
       amount: 1
+      canCraft: 0
     - item: copper
       amount: 5
+      canCraft: 0
     - item: coal
       amount: 5
+      canCraft: 0
     - item: log
       amount: 5
+      canCraft: 0
   - id: iron_bar
     clicks: 0
+    craftTime: 15
     sellAmount: 20
     requirements:
     - item: stone_furnace
       amount: 1
+      canCraft: 0
     - item: iron_ore
       amount: 5
+      canCraft: 0
     - item: coal
       amount: 5
+      canCraft: 0
     - item: log
       amount: 5
+      canCraft: 0
   - id: plank
     clicks: 0
+    craftTime: 15
     sellAmount: 20
     requirements:
     - item: stone_furnace
       amount: 1
+      canCraft: 0
     - item: coal
       amount: 5
+      canCraft: 0
     - item: log
       amount: 10
+      canCraft: 0
   - id: violin
     clicks: 0
+    craftTime: 30
     sellAmount: 80
     requirements:
     - item: brick
       amount: 1
+      canCraft: 0
     - item: copper_bar
       amount: 1
+      canCraft: 0
     - item: iron_bar
       amount: 1
+      canCraft: 0
     - item: plank
       amount: 1
+      canCraft: 0

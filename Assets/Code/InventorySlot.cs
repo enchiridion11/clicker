@@ -6,6 +6,11 @@ using UnityEngine;
 public class InventorySlot : MonoBehaviour {
     #region Fields
 
+    int craftTime = 0;
+    int progress;
+
+    bool isCrafting;
+
     #endregion
 
     #region Properties
@@ -41,17 +46,30 @@ public class InventorySlot : MonoBehaviour {
     }
 
     void SubscribeToEvents () {
-        InventoryManager.Instance.OnAddItem += IncreaseAmount;
+        InventoryManager.Instance.OnAddItem += StartCrafting;
+        TimeManager.Instance.OnTick += OnTimeChange;
     }
 
     void UnsubscribeFromEvents () {
-        InventoryManager.Instance.OnAddItem -= IncreaseAmount;
+        InventoryManager.Instance.OnAddItem -= StartCrafting;
+        TimeManager.Instance.OnTick -= OnTimeChange;
     }
 
-    void IncreaseAmount (string itemId, int currentAmount) {
+    void StartCrafting (string itemId, int currentAmount) {
         if (ItemId == itemId) {
-            Amount++;
-            ItemPresenter.SetAmount (Amount);
+            craftTime = Data.GetItemData (itemId).CraftTime;
+            ItemPresenter.OnCraftStart (craftTime);
+            if (craftTime == 0) {
+                if (craftTime == 0) {
+                    isCrafting = false;
+                    progress = 0;
+                    Amount++;
+                    ItemPresenter.OnCraftComplete (Amount);
+                    return;
+                }
+            }
+
+            isCrafting = true;
         }
     }
 
@@ -62,6 +80,27 @@ public class InventorySlot : MonoBehaviour {
         }
         else {
             RemoveItem ();
+        }
+    }
+
+    void OnTimeChange (int tick) {
+        if (!isCrafting) {
+            return;
+        }
+
+        print ("progress" + progress);
+        print ("OnTimeChange" + ItemPresenter.Bar.SliderValue);
+
+        if (progress <= craftTime) {
+            progress++;
+            ItemPresenter.Bar.OnUpdateValue (progress);
+
+            if (progress > craftTime) {
+                isCrafting = false;
+                progress = 0;
+                Amount++;
+                ItemPresenter.OnCraftComplete (Amount);
+            }
         }
     }
 

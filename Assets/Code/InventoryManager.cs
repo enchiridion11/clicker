@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -43,8 +43,7 @@ public class InventoryManager : MonoBehaviour {
 
     // TODO for testing
     void Update () {
-        if (Input.GetKeyDown (KeyCode.A)) {
-           // ShowVictoryScreen ();
+        if (Input.GetKeyDown (KeyCode.Space)) {
         }
     }
 
@@ -79,7 +78,7 @@ public class InventoryManager : MonoBehaviour {
             for (var i = 0; i < slots.Count; i++) {
                 if (slots[i].IsEmpty) {
                     var item = Instantiate (itemPrefab).GetComponent<InventoryItemPresenter> ();
-                    item.Initialize (itemId, 0);
+                    item.Initialize (itemId, 5);
                     item.transform.SetParent (slots[i].transform);
                     item.transform.localScale = Vector3.one;
                     item.GetComponent<RectTransform> ().anchoredPosition3D = Vector3.zero;
@@ -186,9 +185,8 @@ public class InventoryManager : MonoBehaviour {
     }
 
     void ShowVictoryScreen () {
-        var elapsedTime = Time.timeSinceLevelLoad;;
         var dialog = UIManager.Instance.OpenDialog<UIAlertDialog> (UIWindowManager.ALERT, UIManager.Instance.Dialogs);
-        dialog.Initialize ("you win", "it took you " + (int) elapsedTime + " seconds to finish the game!", "restart", RestartGame);
+        dialog.Initialize ("you win", "it took you " + CurrencyManager.Instance.ElapsedTime + " seconds to finish the game!", "restart", RestartGame);
     }
 
     void RestartGame () {
