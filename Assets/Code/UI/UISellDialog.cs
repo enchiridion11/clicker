@@ -10,9 +10,18 @@ public class UISellDialog : MonoBehaviour {
     #region Fields
 
     [SerializeField]
+    UISpinner spinner;
+
+    [SerializeField]
+    Image itemImage;
+
+    [SerializeField]
     TextMeshProUGUI messageText;
 
     string itemId;
+
+    int itemValue;
+    int sellAmount = 1;
 
     #endregion
 
@@ -30,14 +39,29 @@ public class UISellDialog : MonoBehaviour {
 
     #endregion
 
-    public void Initialize (string itemId, int sellAmount) {
-        this.itemId = itemId;
+    void OnEnable () {
+        spinner.OnValueChange += OnSellAmountChange;
+    }
 
-        messageText.text = string.Format ("Sell {0} for <color=#F92772>{1}</color> gold?", itemId, sellAmount);
+    void OnDisable () {
+        spinner.OnValueChange -= OnSellAmountChange;
+    }
+
+    public void Initialize (string itemId, int sellValue) {
+        this.itemId = itemId;
+        itemValue = sellValue;
+        spinner.Initialize (1, 1, InventoryManager.Instance.GetItemAmount (itemId));
+        itemImage.sprite = UIManager.Instance.GetItemIcon (itemId);
+        messageText.text = string.Format ("for +<color=#A7E22E>{0}</color>", sellValue);
+    }
+
+    void OnSellAmountChange (int amount) {
+        sellAmount = itemValue * amount;
+        messageText.text = string.Format ("for +<color=#A7E22E>{0}</color>", sellAmount);
     }
 
     public void Sell () {
-        InventoryManager.Instance.OnSellItem (itemId);
+        InventoryManager.Instance.OnSellItem (itemId, sellAmount);
         Close ();
     }
 

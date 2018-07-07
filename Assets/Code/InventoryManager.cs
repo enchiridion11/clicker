@@ -41,6 +41,13 @@ public class InventoryManager : MonoBehaviour {
 
     #region Unity
 
+    // TODO for testing
+    void Update () {
+        if (Input.GetKeyDown (KeyCode.A)) {
+           // ShowVictoryScreen ();
+        }
+    }
+
     void OnDisable () {
         UnsubscribeFromEvents ();
     }
@@ -163,21 +170,25 @@ public class InventoryManager : MonoBehaviour {
         dialog.Initialize (itemId, sellAmount);
     }
 
-    public void OnSellItem (string itemId) {
-        var sellAmount = Data.GetItemData (itemId).SellAmount;
+    public void OnSellItem (string itemId, int amount) {
+        var sellAmount = Data.GetItemData (itemId).SellAmount * amount;
         var slot = GetItemSlot (itemId);
 
         UIManager.Instance.SellItemAnimation (slot.transform.position);
 
         CurrencyManager.Instance.IncreaseCurrency ("gold", sellAmount);
 
-        //TODO: add amount to dialog
-        slot.DecreaseAmount (1);
+        slot.DecreaseAmount (amount);
+
+        if (OnRemoveItem != null) {
+            OnRemoveItem (itemId, GetItemAmount (itemId));
+        }
     }
 
     void ShowVictoryScreen () {
+        var elapsedTime = Time.timeSinceLevelLoad;;
         var dialog = UIManager.Instance.OpenDialog<UIAlertDialog> (UIWindowManager.ALERT, UIManager.Instance.Dialogs);
-        dialog.Initialize ("you win", "now go fiddle your fiddle", "fiddle!", RestartGame);
+        dialog.Initialize ("you win", "it took you " + (int) elapsedTime + " seconds to finish the game!", "restart", RestartGame);
     }
 
     void RestartGame () {
