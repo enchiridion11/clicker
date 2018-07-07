@@ -12,9 +12,9 @@ public class CurrencyManager : MonoBehaviour {
 
     [SerializeField]
     TextMeshProUGUI premiumCurrencyText;
-    
+
     [SerializeField]
-    ParticleSystem particles;
+    RectTransform currencyIcon;
 
     int currencyAmount;
     int premiumCurrencyAmount;
@@ -26,6 +26,11 @@ public class CurrencyManager : MonoBehaviour {
     public static CurrencyManager Instance { get; private set; }
 
     CurrencyDefaults[] Currency { get; set; }
+
+    public RectTransform CurrencyIcon {
+        get { return currencyIcon; }
+        set { currencyIcon = value; }
+    }
 
     #endregion
 
@@ -58,7 +63,6 @@ public class CurrencyManager : MonoBehaviour {
             case "gold":
                 currencyAmount += amount;
                 currencyText.text = currencyAmount.ToString ();
-                particles.Play ();
                 break;
             case "diamonds":
                 premiumCurrencyAmount += amount;
@@ -66,7 +70,7 @@ public class CurrencyManager : MonoBehaviour {
                 break;
         }
     }
-    
+
     public void DecreaseCurrency (string currency, int amount) {
         switch (currency) {
             case "gold":

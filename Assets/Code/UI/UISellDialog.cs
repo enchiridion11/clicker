@@ -22,8 +22,6 @@ public class UISellDialog : MonoBehaviour {
 
     #region Events
 
-    public Action<UISellDialog> OnClose;
-
     #endregion
 
     #region Methods
@@ -43,7 +41,7 @@ public class UISellDialog : MonoBehaviour {
         Close ();
     }
 
-    void Close () {
+    public void Close () {
         UIManager.Instance.Overlay.SetActive (false);
         Destroy (gameObject);
     }

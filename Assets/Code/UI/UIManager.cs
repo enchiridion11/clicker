@@ -20,6 +20,11 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     GameObject overlay;
 
+    [Header ("Prefabs"), SerializeField]
+    GameObject sellParticles;
+
+    RectTransform rect;
+
     #endregion
 
     #region Properties
@@ -79,5 +84,53 @@ public class UIManager : MonoBehaviour {
         return Resources.Load<Sprite> (string.Format ("Sprites/Items/item_{0}_01", itemId));
     }
 
+    public void SellItemAnimation (Vector3 startPos) {
+        var particles = Instantiate (sellParticles);
+        var target = WorldToCanvasPosition (CurrencyManager.Instance.CurrencyIcon.position);
+        particles.transform.SetParent (dialogs);
+        particles.transform.localScale = Vector3.one;
+        rect = particles.GetComponent<RectTransform> ();
+        rect.anchoredPosition3D = WorldToCanvasPosition (startPos);
+
+        iTween.ValueTo (rect.gameObject, iTween.Hash (
+            "from", rect.anchoredPosition,
+            "to", target,
+            "time", 0.8f,
+            "onupdatetarget", gameObject,
+            "onupdate", "OnUpdate",
+            "oncompletetarget", gameObject,
+            "oncomplete", "OnCompleteDelay"
+        ));
+    }
+
+    Vector2 WorldToCanvasPosition (Vector3 position) {
+        var canvasRect = canvas.GetComponent<RectTransform> ();
+        Vector2 temp = Camera.main.WorldToViewportPoint (position);
+
+        temp.x *= canvasRect.sizeDelta.x;
+        temp.y *= canvasRect.sizeDelta.y;
+
+        temp.x -= canvasRect.sizeDelta.x * canvasRect.pivot.x;
+        temp.y -= canvasRect.sizeDelta.y * canvasRect.pivot.y;
+
+        return temp;
+    }
+
+    #region iTween
+    
+    void OnUpdate (Vector2 position) {
+        rect.anchoredPosition = position;
+    }
+
+    void OnCompleteDelay () {
+        Invoke ("OnComplete", 0.3f);
+    }
+
+    void OnComplete () {
+        Destroy (rect.gameObject);
+    }
+
+    #endregion
+    
     #endregion
 }

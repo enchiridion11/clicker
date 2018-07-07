@@ -165,9 +165,12 @@ public class InventoryManager : MonoBehaviour {
 
     public void OnSellItem (string itemId) {
         var sellAmount = Data.GetItemData (itemId).SellAmount;
+        var slot = GetItemSlot (itemId);
+
+        UIManager.Instance.SellItemAnimation (slot.transform.position);
+
         CurrencyManager.Instance.IncreaseCurrency ("gold", sellAmount);
 
-        var slot = GetItemSlot (itemId);
         //TODO: add amount to dialog
         slot.DecreaseAmount (1);
     }

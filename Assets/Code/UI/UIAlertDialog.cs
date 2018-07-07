@@ -19,7 +19,7 @@ public class UIAlertDialog : MonoBehaviour {
     TextMeshProUGUI buttonText;
 
     [SerializeField]
-    Button button;
+    UIButton button;
 
     #endregion
 
@@ -41,7 +41,7 @@ public class UIAlertDialog : MonoBehaviour {
         titleText.text = title;
         messageText.text = message;
         buttonText.text = buttonTitle;
-        button.onClick.AddListener (callback ?? Close);
+        button.OnClick.AddListener (callback ?? Close);
     }
 
     public void Close () {
